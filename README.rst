@@ -77,9 +77,8 @@ timbl.TimblClassifier: High-level interface
 
 The high-level interface features as ``TimblClassifier`` class which can be used for training and testing classifiers. An example is provided in ``example.py``, parts of it will be discussed here.
 
-After importing the necessary module, the classifier is instantiated by passing it an identifier which will be used as prefix used for all filenames written, and a string containing options just as you would pass them to Timbl: 
+After importing the necessary module, the classifier is instantiated by passing it an identifier which will be used as prefix used for all filenames written, and a string containing options just as you would pass them to Timbl::
 
-::
 	import timbl
 	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )
 
@@ -127,9 +126,7 @@ For documentation on the low level ``timblapi`` interface you can consult the Ti
 **Naming style**
 
 In the C++ interface, method names are in *UpperCamelCase*; for example, ``Classify``, ``SetOptions``, etc. In contrast, the Python interface uses *lowerCamelCase*: ``classify``, ``setOptions``, etc.
-Method overloading TiMBL's ``Classify`` methods use the C++ method overloading feature to provide three different kinds of outputs. Method overloading is non-existant in Python though; therefore, python-timbl has three differently named methods to mirror the functionality of the overloaded Classify method. The mapping is as follows.
-
-::
+Method overloading TiMBL's ``Classify`` methods use the C++ method overloading feature to provide three different kinds of outputs. Method overloading is non-existant in Python though; therefore, python-timbl has three differently named methods to mirror the functionality of the overloaded Classify method. The mapping is as follows::
 
 	# bool TimblAPI::Classify(const std::string& Line,
 	#                         std::string& result);

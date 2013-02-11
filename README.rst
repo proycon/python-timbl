@@ -82,13 +82,14 @@ After importing the necessary module, the classifier is instantiated by passing 
 	import timbl
 	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )
 
+
 Training instances can be added using the ``append(featurevector, classlabel)`` method::
 
 	classifier.append( (1,0,0), 'financial')
 	classifier.append( (0,1,0), 'furniture')
 	classifier.append( (0,0,1), 'geographic')
 	
-Subsequently, you invoke the actual training::
+Subsequently, you invoke the actual training, note that at each step Timbl may output considerable details about what it is doing to standard error output::
 
 	classifier.train()
 	

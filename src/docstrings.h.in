@@ -200,6 +200,16 @@ Load the feature weight table for the given weighting scheme from a file.
 """
 
 
+GETACCURACY_DOC = """
+self.getAccuracy()
+
+Return the accuracy after classification
+
+:return: accuracy value
+:rtype: double
+"""
+
+
 GETARRAYS_DOC = """
 self.getArrays(file)
 

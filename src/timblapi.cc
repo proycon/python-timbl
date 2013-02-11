@@ -194,6 +194,8 @@ BOOST_PYTHON_MODULE(timbl)
 
 		.def("saveWeights", &TimblApiWrapper::SaveWeights, SAVEWEIGHTS_DOC)
 		.def("getWeights", &TimblApiWrapper::GetWeights, GETWEIGHTS_DOC)
+		
+		.def("getAccuracy", &TimblApiWrapper::GetAccuracy, GETACCURACY_DOC)
 
 		.def("writeArrays", &TimblApiWrapper::WriteArrays, WRITEARRAYS_DOC)
 		.def("getArrays", &TimblApiWrapper::GetArrays, GETARRAYS_DOC)

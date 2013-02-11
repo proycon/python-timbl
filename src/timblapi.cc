@@ -172,7 +172,7 @@ bool TimblApiWrapper::showWeights(object& stream)
 }*/
 
 
-BOOST_PYTHON_MODULE(timbl)
+BOOST_PYTHON_MODULE(timblapi)
 {
 	scope().attr("__doc__") = MODULE_DOC;
 

@@ -186,7 +186,7 @@ BOOST_PYTHON_MODULE(timbl)
 		.def("setOptions", &TimblApiWrapper::SetOptions, SETOPTIONS_DOC)
 		.def("showOptions", &TimblApiWrapper::showOptions, SHOWOPTIONS_DOC)
 		.def("showSettings", &TimblApiWrapper::showSettings, SHOWSETTINGS_DOC)
-		.def("showStatistics", &TimblApiWrapper::ShowStatistics, SHOWSETTINGS_DOC)
+		.def("showStatistics", &TimblApiWrapper::ShowStatistics, SHOWSTATISTICS_DOC)
 
 		.def("writeInstanceBase", &TimblApiWrapper::WriteInstanceBase,
 				 WRITEINSTANCEBASE_DOC)

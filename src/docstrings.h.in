@@ -126,6 +126,16 @@ Print all options and their current values to an output stream.
 :rtype: bool
 """
 
+SHOWSTATISTICS_DOC = """
+self.showStatistics(stream)
+
+Print statistics to an output stream
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
 
 WRITEINSTANCEBASE_DOC = """
 self.writeInstanceBase(file)

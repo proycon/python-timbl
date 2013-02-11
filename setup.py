@@ -103,5 +103,6 @@ setup(
 	author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",
 	url="http://github.com/proycon/python-timbl",
 	license="GPL",
+	py_modules=['timbl'],
 	ext_modules=[timblModule],
 	cmdclass={"build_ext": BuildExt})

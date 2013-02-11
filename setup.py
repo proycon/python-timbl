@@ -90,17 +90,17 @@ class BuildExt(build_ext):
 		build_ext.build_extensions(self)
 
 
-timblModule = Extension("timbl", ["src/timbl.cc"],
+timblModule = Extension("timblapi", ["src/timblapi.cc"],
 						libraries=["timbl"],
-						depends=["src/timbl.h", "src/docstrings.h"])
+						depends=["src/timblapi.h", "src/docstrings.h"])
 
 
 setup(
 	name="python-timbl",
 	version="2013.02.11",
 	description="Python language binding for the Tilburg Memory-Based Learner",
-	author="Sander Canisius",
-	author_email="S.V.M.Canisius@uvt.nl",
+	author="Sander Canisius, Maarten van Gompel",
+	author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",
 	url="http://github.com/proycon/python-timbl",
 	license="GPL",
 	ext_modules=[timblModule],

@@ -43,7 +43,7 @@
  *
  */
 
-#include "timbl.h"
+#include "timblapi.h"
 #include "docstrings.h"
 
 #include <unistd.h>

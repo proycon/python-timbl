@@ -78,11 +78,49 @@ python-timbl offers two interface to the timbl API. A low-level interface contai
 timbl.TimblClassifier: High-level interface
 ----------------------
 
+The high-level interface features as ``TimblClassifier`` class which can be used for training and testing classifiers. An example is provided in ``example.py``, parts of it will be discussed here.
+
+After importing the necessary module, the classifier is instantiated by passing it an identifier which will be used as prefix used for all filenames written, and a string containing options just as you would pass them to Timbl: 
+
+::
+	import timbl
+	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )
+
+Training instances can be added using the ``append(featurevector, classlabel)`` method::
+
+	classifier.append( (1,0,0), 'financial')
+	classifier.append( (0,1,0), 'furniture')
+	classifier.append( (0,0,1), 'geographic')
+	
+Subsequently, you invoke the actual training::
+
+	classifier.train()
+	
+The results of this training is an instance base file, which you can save to file so you can load it again later::
+
+	classifier.save()
+		
+	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )	
+	classifier.load() 	
+	
 
 
+The main advantage of the Python library is the fact that you can classify instances on the fly as follows, just pass a feature vector and optionally also a class label to ``classify(featurevector, classlabel)``::
 
+	classlabel, distribution, distance = classifier.classify( (1,0,0) )
+	
+You can also create a test file and test it all at once::
 
+	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )
+	classifier.load()
+	classifier.addinstance("testfile", (1,0,0),'financial' ) #addinstance can be used to add instances to external files (use append() for training)
+	classifier.addinstance("testfile", (0,1,0),'furniture' )
+	classifier.addinstance("testfile", (0,0,1),'geograpic' )
+	classifier.addinstance("testfile", (1,1,0),'geograpic' ) #this one will be wrongly classified as financial & furniture 
+	classifier.test("testfile")
 
+	print "Accuracy: ", classifier.getAccuracy()
+	
 
 timblapi: Low-level interface
 -------------------------

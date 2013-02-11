@@ -1,0 +1,10 @@
+Metadata-Version: 1.1
+Name: python-timbl
+Version: 2013.02.11
+Summary: Python language binding for the Tilburg Memory-Based Learner
+Home-page: http://github.com/proycon/python-timbl
+Author: Sander Canisius, Maarten van Gompel
+Author-email: proycon@anaproy.nl
+License: GPL
+Description: UNKNOWN
+Platform: UNKNOWN

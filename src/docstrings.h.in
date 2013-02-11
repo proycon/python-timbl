@@ -1,0 +1,473 @@
+MODULE_DOC = """
+The Tilburg Memory-Based Learner (TiMBL) is an efficient
+implementation of several memory-based learning algorithms. In
+addition to the TiMBL command-line application, TiMBL's functionality
+is also available for programmatic access via a C++ programming
+interface, referred to as the TimblAPI. This module implements a
+Python language binding to this interface.
+
+The main entry point for this module is the TimblAPI class. It
+provides methods for all standard tasks that can be performed with
+TiMBL. The following brief example shows how a TiMBL classifier is
+trained, and subsequently applied to an unseen test instance.
+
+>>> import timbl
+>>> mbl = timbl.TimblAPI('-a IB1', '')
+>>> mbl.learn('dimin.data')
+>>> mbl.classOf('- - - = t j e ?')
+(True, 'T')
+"""
+
+
+TIMBLAPI_DOC = """
+The TiMBL Application Programming Interface. All functionality exposed
+through the TiMBL C++ API can be accessed using methods of this class.
+"""
+
+
+INIT_DOC = """
+TimblAPI(options, name)
+
+Create a TiMBL experiment. The options argument is used to pass
+various options to TiMBL in exactly the same way as they would be
+written on the command-line. Some (but not all) option settings can
+later on be changed using the setOptions method.
+
+:Parameters:
+  `options` : str
+      an option string used to initialise various TiMBL settings
+
+  `name` : str
+      a descriptive name given to the experiment. This name is printed
+      with any warning or error messages produced by TiMBL.
+"""
+
+
+LEARN_DOC = """
+self.learn(file)
+
+Train TiMBL on the specified input file.
+
+:Parameters:
+  `file` : str
+      the input file containing the training instances.
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+TEST_DOC = """
+self.test(in, out, perc)
+
+Test the TiMBL model using the given test file.
+
+:Parameters:
+  `in` : str
+      the input file containing the test instances
+
+  `out` : str
+      the output file to write the output predictions to
+
+  `perc` : str
+      if not empty (''), the file to write the classification accuracy to
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+SETOPTIONS_DOC = """
+self.setOptions(opts)
+
+Change the value of one or more options.
+
+Some options can only be set when initialising a TimblAPI
+instance. Trying to change the value of those options with this method
+will not succeed.
+
+:Parameters:
+  `opts` : str
+      an option string; this string follows the same format as is used
+      to pass option values to the TiMBL command-line application
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+SHOWOPTIONS_DOC = """
+self.showOptions(stream)
+
+Print all options with their possible and current values to an output
+stream.
+
+:Parameters:
+  `stream`
+      a stream object, i.e. any object that has a `fileno` method
+      whose return value is a valid file descriptor
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+SHOWSETTINGS_DOC = """
+self.showSettings(stream)
+
+Print all options and their current values to an output stream.
+
+:Parameters:
+  `stream`
+      a stream object, i.e. any object that has a `fileno` method
+      whose return value is a valid file descriptor
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+WRITEINSTANCEBASE_DOC = """
+self.writeInstanceBase(file)
+
+Store the current instance base to a file.
+
+:Parameters:
+  `file` : str
+      the output file to write the instance base to
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+SAVEWEIGHTS_DOC = """
+self.saveWeights(file)
+
+Store the current feature weight tables to a file.
+
+:Parameters:
+  `file` : str
+      the output file to write the tables to
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+WRITEARRAYS_DOC = """
+self.writeArrays(file)
+
+Store the current probability arrays to a file.
+
+:Parameters:
+  `file` : str
+      the output file to write the arrays to
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+GETINSTANCEBASE_DOC = """
+self.getInstanceBase(file)
+
+Load an instance base from a file.
+
+:Parameters:
+  `file` : str
+      the input file to load the instance base from
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+GETWEIGHTS_DOC = """
+self.getWeights(file, weighting)
+
+Load the feature weight table for the given weighting scheme from a file.
+
+:Parameters:
+  `file` : str
+      the input file to load the table from
+
+  `weighting` : Weighting
+      the feature weighting scheme for which to load the table
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+GETARRAYS_DOC = """
+self.getArrays(file)
+
+Load probability arrays from a file.
+
+:Parameters:
+  `file` : str
+      the input file to load the arrays from
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+CLASSIFY_DOC = """
+self.classify(instance)
+
+Return the predicted class for a given test instance.
+
+:Parameters:
+  `instance` : str
+      a string representation of the test instance. The format of this
+      string is the same as used by the TiMBL command-line
+      application.
+
+:return: (boolean signalling success or failure, the predicted class)
+:rtype: (bool, str)
+"""
+
+
+CLASSIFY2_DOC = """
+self.classify2(instance)
+
+Return the predicted class and the distance of the nearest neighbour
+for a given test instance.
+
+:Parameters:
+  `instance` : str
+      a string representation of the test instance. The format of this
+      string is the same as used by the TiMBL command-line
+      application.
+
+:return: (boolean signalling success or failure, the predicted class,
+          distance of the nearest neighbour)
+:rtype: (bool, str, float)
+"""
+
+
+CLASSIFY3_DOC = """
+self.classify3(instance)
+
+Return the predicted class, the class distribution, and the distance
+of the nearest neighbour for a given test instance.
+
+:Parameters:
+  `instance` : str
+      a string representation of the test instance. The format of this
+      string is the same as used by the TiMBL command-line
+      application.
+
+:return: (boolean signalling success or failure, the predicted class,
+          class distribution, distance of the nearest neighbour)
+:rtype: (bool, str, str, float)
+"""
+
+
+SHOWBESTNEIGHBOURS_DOC = """
+self.showBestNeighbours(stream, distr)
+
+Print the nearest neighbour set for the most-recent classification to
+an output stream.
+
+For this method to work successfully, either the +vn or the +vk
+options must have been enabled. The output printed to the output
+stream is the same as produced by the TiMBL command-line application
+using the same options.
+
+:Parameters:
+  `stream`
+      a stream object, i.e. any object that has a `fileno` method whose
+      return value is a valid file descriptor
+
+  `distr` : bool
+      if True, also print distributions
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+SHOWBESTNEIGHBORS_DOC = """
+self.showBestNeighbors(stream, distr)
+
+This is an alias for ``showBestNeighbours``.
+"""
+
+
+INCREMENT_DOC = """
+self.increment(instance)
+
+Add an instance to the instance base.
+
+:Parameters:
+  `instance` : str
+      a string representation of the instance to be added. The format
+      of this string is the same as used by the TiMBL command-line
+      application.
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+DECREMENT_DOC = """
+self.decrement(instance)
+
+Remove an instance from the instance base.
+
+:Parameters:
+  `instance` : str
+      a string representation of the instance to be removed. The
+      format of this string is the same as used by the TiMBL
+      command-line application.
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+EXPAND_DOC = """
+self.expand(file)
+
+Add all instances in a file to the instance base.
+
+:Parameters:
+  `file` : str
+      the input file to read the instances from
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+REMOVE_DOC = """
+self.remove(file)
+
+Remove all instances in a file from the instance base.
+
+:Parameters:
+  `file` : str
+      the input file to read the instances from
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+WRITENAMESFILE_DOC = """
+self.writeNamesFile(file)
+
+Write a C4.5-style names file.
+
+:Parameters:
+  `file` : str
+      the output file to write
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+ALGO_DOC = """
+self.algo()
+
+Return the current algorithm.
+
+:return: the current algorithm
+:rtype: Algorithm
+"""
+
+
+EXPNAME_DOC = """
+self.expName()
+
+Return the experiment name passed to the constructor of this TimblAPI
+instance.
+
+:return: the name of the current experiment
+:rtype: str
+"""
+
+
+VERSIONINFO_DOC = """
+self.versionInfo(full)
+
+Return a string containing the version number, revision, revision
+string, and optionally date and time of compilation of this TimblAPI
+implementation
+
+:Parameters:
+  `full` : bool
+      if True, include the date and time of compilation in the
+      returned string
+
+:return: version info string
+:rtype: str
+"""
+
+
+STARTSERVER_DOC = """
+self.startServer(port, maxConnections)
+
+Start a TiMBL server.
+
+:Parameters:
+  `port` : int
+      the TCP port on which to listen for connections
+
+  `maxConnections` : int
+      the maximum number of simultaneous connections
+
+:return: boolean signalling success or failure
+:rtype: bool
+"""
+
+
+CURRENTWEIGHTING_DOC = """
+self.currentWeighting()
+
+Return the current weighting scheme.
+
+:return: the current weighting scheme
+:rtype: Weighting
+"""
+
+
+BESTNEIGHBOURS_DOC = """
+self.bestNeighbours(distr)
+
+Return the output of the showBestNeighbours method as a string.
+
+:return: the output of the showBestNeighbours method
+:rtype: str
+"""
+
+
+BESTNEIGHBORS_DOC = """
+self.bestNeighbors(distr)
+
+This is an alias for ``bestNeighbours``.
+"""
+
+
+OPTIONS_DOC = """
+self.options()
+
+Return the output of the showOptions method as a string.
+
+:return: the output of the showOptions method
+:rtype: str
+"""
+
+
+SETTINGS_DOC = """
+self.settings()
+
+Return the output of the showSettings method as a string.
+
+:return: the output of the showSettings method
+:rtype: str
+"""

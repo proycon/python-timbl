@@ -23,7 +23,11 @@ class TimblClassifier(object):
         else:            
             raise ValueError("Only Tabbed and Columns are supported input format for the python wrapper, not " + format)
         self.timbloptions = timbloptions
-        self.fileprefix = fileprefix
+        if isinstance(fileprefix, unicode):
+            self.fileprefix = fileprefix.encode('utf-8')
+        else:
+            self.fileprefix = fileprefix
+
         self.encoding = encoding
         self.dist = dist
         
@@ -55,7 +59,7 @@ class TimblClassifier(object):
         features = self.validatefeatures(features)
                 
         if self.delimiter in classlabel: 
-                raise ValueError("Class label contains delimiter: " + feature)
+            raise ValueError("Class label contains delimiter: " + self.delimiter)
                                         
         self.instances.append(self.delimiter.join(features) + self.delimiter + classlabel)
         if len(self.instances) >= self.flushthreshold:  
@@ -89,7 +93,8 @@ class TimblClassifier(object):
             options += " +v+db +v+di"
         print >>sys.stderr, "Calling Timbl API for training: " + options 
         self.api = timblapi.TimblAPI(options, "")
-        self.api.learn(self.fileprefix + ".train")
+        trainfile = self.fileprefix + ".train"
+        self.api.learn(trainfile)
         if save:
             self.save()
 
@@ -106,6 +111,8 @@ class TimblClassifier(object):
         if not self.api:
             self.load()
         testinstance = self.delimiter.join(features) + self.delimiter + "?"
+        if isinstance(testinstance,unicode):
+            testinstance = testinstance.encode('utf-8')
         if self.dist:
             result, cls, distribution, distance = self.api.classify3(testinstance)            
             return (cls, self._parsedistribution(distribution.split(' ')), distance)
@@ -135,7 +142,7 @@ class TimblClassifier(object):
         features = self.validatefeatures(features)
                 
         if self.delimiter in classlabel: 
-            raise ValueError("Class label contains delimiter: " + feature)
+            raise ValueError("Class label contains delimiter: " + self.delimiter)
 
         
         f = codecs.open(testfile,'a', self.encoding)
@@ -146,6 +153,8 @@ class TimblClassifier(object):
         """Test on an existing testfile and return the accuracy"""
         if not self.api:
             self.load()
+        if isinstance(testfile, unicode):
+            testfile = testfile.encode('utf-8')
         self.api.test(testfile, self.fileprefix + '.out','')
         return self.api.getAccuracy()                        
             

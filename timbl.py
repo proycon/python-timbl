@@ -208,6 +208,7 @@ class TimblClassifier(object):
 
         while i < end:  #instance[i] != "}":
             label = instance[i]
+            if self.format == "Tabbed": label = label.replace('\\_',' ')
             try:
                 score = float(instance[i+1].rstrip(","))
                 dist[label] = score

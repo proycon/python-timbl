@@ -7,10 +7,49 @@
 
 # Licensed under GPL 
 
-import timblapi
-import codecs
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+
 import sys
+if sys.version < '3':
+    from codecs import getwriter
+    stderr = getwriter('utf-8')(sys.stderr)
+    stdout = getwriter('utf-8')(sys.stdout)
+else:
+    stderr = sys.stderr
+    stdout = sys.stdout
+
+import timblapi
+import io
 import os
+
+
+def b(s):
+    """Conversion to bytes"""
+    if sys.version < '3':
+        if isinstance(s, unicode):
+            return s.encode('utf-8')
+    else:            
+        if isinstance(s, str):
+            return s.encode('utf-8')
+               
+def u(s, encoding = 'utf-8', errors='strict'):
+    #ensure s is properly unicode.. wrapper for python 2.6/2.7,
+    if sys.version < '3':
+        #ensure the object is unicode
+        if isinstance(s, unicode):
+            return s
+        else:
+            return unicode(s, encoding,errors=errors)
+    else:
+        #will work on byte arrays
+        if isinstance(s, str):
+            return s
+        else:
+            return str(s,encoding,errors=errors)               
+     
 
 class TimblClassifier(object):
     def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000):
@@ -23,10 +62,7 @@ class TimblClassifier(object):
         else:            
             raise ValueError("Only Tabbed and Columns are supported input format for the python wrapper, not " + format)
         self.timbloptions = timbloptions
-        if isinstance(fileprefix, unicode):
-            self.fileprefix = fileprefix.encode('utf-8')
-        else:
-            self.fileprefix = fileprefix
+        self.fileprefix = fileprefix
 
         self.encoding = encoding
         self.dist = dist
@@ -69,9 +105,9 @@ class TimblClassifier(object):
         if len(self.instances) == 0: return False
         
         if self.flushed:
-            f = codecs.open(self.fileprefix + ".train",'a', self.encoding)
+            f = io.open(self.fileprefix + ".train",'a', encoding=self.encoding)
         else:
-            f = codecs.open(self.fileprefix + ".train",'w', self.encoding)
+            f = io.open(self.fileprefix + ".train",'w', encoding=self.encoding)
         
         for instance in self.instances: 
             f.write(instance +  "\n")
@@ -91,18 +127,18 @@ class TimblClassifier(object):
         options = "-F " + self.format + " " +  self.timbloptions
         if self.dist:    
             options += " +v+db +v+di"
-        print >>sys.stderr, "Calling Timbl API for training: " + options 
-        self.api = timblapi.TimblAPI(options, "")
+        print("Calling Timbl API for training: " + options, file=stderr) 
+        self.api = timblapi.TimblAPI(b(options), b"")
         trainfile = self.fileprefix + ".train"
-        self.api.learn(trainfile)
+        self.api.learn(b(trainfile))
         if save:
             self.save()
 
     def save(self):
         if not self.api:
             raise Exception("No API instantiated, did you train the classifier first?")    
-        self.api.writeInstanceBase(self.fileprefix + ".ibase")
-        self.api.saveWeights(self.fileprefix + ".wgt")            
+        self.api.writeInstanceBase(b(self.fileprefix + ".ibase"))
+        self.api.saveWeights(b(self.fileprefix + ".wgt"))            
 
     def classify(self, features):
         
@@ -111,13 +147,14 @@ class TimblClassifier(object):
         if not self.api:
             self.load()
         testinstance = self.delimiter.join(features) + self.delimiter + "?"
-        if isinstance(testinstance,unicode):
-            testinstance = testinstance.encode('utf-8')
         if self.dist:
-            result, cls, distribution, distance = self.api.classify3(testinstance)            
+            result, cls, distribution, distance = self.api.classify3(b(testinstance))  
+            cls = u(cls)
+            distribution = u(distribution)
             return (cls, self._parsedistribution(distribution.split(' ')), distance)
         else:
             result, cls = self.api.classify(testinstance)
+            cls = u(cls)
             return cls
         
     def getAccuracy(self):
@@ -130,9 +167,9 @@ class TimblClassifier(object):
             raise Exception("Instance base not found, did you train and save the classifier first?")
         
         options = "-F " + self.format + " " +  self.timbloptions
-        self.api = timblapi.TimblAPI(options, "") 
-        print >>sys.stderr, "Calling Timbl API : " + options
-        self.api.getInstanceBase(self.fileprefix + '.ibase')
+        self.api = timblapi.TimblAPI(b(options), b"") 
+        print("Calling Timbl API : " + options,file=stderr)
+        self.api.getInstanceBase(b(self.fileprefix + '.ibase'))
         #if os.path.exists(self.fileprefix + ".wgt"):
         #    self.api.getWeights(self.fileprefix + '.wgt')
         
@@ -145,7 +182,7 @@ class TimblClassifier(object):
             raise ValueError("Class label contains delimiter: " + self.delimiter)
 
         
-        f = codecs.open(testfile,'a', self.encoding)
+        f = io.open(testfile,'a', encoding=self.encoding)
         f.write(self.delimiter.join(features) + self.delimiter + classlabel + "\n")
         f.close()
         
@@ -153,15 +190,13 @@ class TimblClassifier(object):
         """Test on an existing testfile and return the accuracy"""
         if not self.api:
             self.load()
-        if isinstance(testfile, unicode):
-            testfile = testfile.encode('utf-8')
-        self.api.test(testfile, self.fileprefix + '.out','')
+        self.api.test(b(testfile), b(self.fileprefix + '.out'),b'')
         return self.api.getAccuracy()                        
             
     def readtestoutput(self):
         if not os.path.exists(self.fileprefix + ".out"):
             raise Exception("No test output available. Run test() first")
-        f = codecs.open(self.fileprefix + '.out', 'r', self.encoding)
+        f = io.open(self.fileprefix + '.out', 'r', encoding=self.encoding)
         for line in f:
             endfvec = None
             line = line.strip()
@@ -213,12 +248,12 @@ class TimblClassifier(object):
                 score = float(instance[i+1].rstrip(","))
                 dist[label] = score
             except:
-                print >>sys.stderr, "ERROR: timbl._parsedistribution -- Could not fetch score for class '" + label + "', expected float, but found '"+instance[i+1].rstrip(",")+"'. Instance= " + " ".join(instance)+ ".. Attempting to compensate..."
+                print("ERROR: timbl._parsedistribution -- Could not fetch score for class '" + label + "', expected float, but found '"+instance[i+1].rstrip(",")+"'. Instance= " + " ".join(instance)+ ".. Attempting to compensate...",file=stderr)
                 i = i - 1
             i += 2
             
         if not dist:
-            print >>sys.stderr, "ERROR: timbl._parsedistribution --  Did not find class distribution for ", instance
+            print("ERROR: timbl._parsedistribution --  Did not find class distribution for ", instance, file=stderr)
 
         return dist
 

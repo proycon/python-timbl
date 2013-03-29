@@ -1,7 +1,9 @@
-#!/usr/bin/python
-import os.path
+#!/usr/bin/python3
 
-from itertools import ifilter
+import sys
+import os
+import shutil
+shutil.copyfile("setup3.py","setup.py")
 
 from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext
@@ -14,13 +16,12 @@ def updateDocHeader(input, output):
 	execfile(input, docstrings)
 
 	stream = open(output, "w")
-	print >> stream, "#ifndef TIMBL_DOC_H"
-	print >> stream, "#define TIMBL_DOC_H\n"
-	print >> stream, "#include <Python.h>\n"
+	print("#ifndef TIMBL_DOC_H",file=stream)
+	print("#define TIMBL_DOC_H\n",file=stream)
+	print("#include <Python.h>\n",file=stream)
 
-	for var in ifilter(lambda v: v.endswith("_DOC"), docstrings):
-		print >> stream, "PyDoc_STRVAR(%s, \"%s\");\n" % (
-			var, docstrings[var].strip().encode("string_escape"))
+	for var in filter(lambda v: v.endswith("_DOC"), docstrings):
+		print("PyDoc_STRVAR(%s, \"%s\");\n" % (var, docstrings[var].strip().encode("string_escape")), file=stream)
 
 	print >> stream, "#endif"
 
@@ -36,10 +37,10 @@ class BuildExt(build_ext):
 		("timbl-library-dir=", None, "directory for TiMBL library files"),
 		("libxml2-include-dir=", None, "directory for LibXML2 files"),
 		("libxml2-library-dir=", None, "directory for LibXML2 library files"),		
-		("static-boost-python", "s", "statically link boost-python")]
+		("static-boost-python3", "s", "statically link boost-python")]
 
 	boolean_options = build_ext.boolean_options + [
-		"static-boost-python"]
+		"static-boost-python3"]
 
 	def initialize_options(self):
 		build_ext.initialize_options(self)
@@ -80,12 +81,14 @@ class BuildExt(build_ext):
 			ext.library_dirs.append(self.boost_library_dir)
 			ext.library_dirs.append(self.libxml2_library_dir)
 
+			pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 32 
+
 			if isinstance(self.compiler, UnixCCompiler) and \
 				   self.static_boost_python:
 				ext.extra_link_args.extend(
-					"-Wl,-Bstatic -lboost_python -Wl,-Bdynamic".split())
+					"-Wl,-Bstatic -lboost_python-py" + pyversion + " -Wl,-Bdynamic".split())
 			else:
-				ext.libraries.append("boost_python")
+				ext.libraries.append("boost_python-py" + pyversion)
 
 		build_ext.build_extensions(self)
 
@@ -96,9 +99,9 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 
 setup(
-	name="python-timbl",
-	version="2013.02.11",
-	description="Python language binding for the Tilburg Memory-Based Learner",
+	name="python3-timbl",
+	version="2013.03.29",
+	description="Python 3 language binding for the Tilburg Memory-Based Learner",
 	author="Sander Canisius, Maarten van Gompel",
 	author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",
 	url="http://github.com/proycon/python-timbl",

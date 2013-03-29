@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf8 -*-
 
+
+from __future__ import print_function,  unicode_literals, division, absolute_import #Make Python 2.x act as much like Python 3 as possible
+
 import timbl
 import os
 
@@ -37,15 +40,15 @@ classifier.load() #even if this is omitted it will still work, the first classif
 #Let's classify an instance:
 classlabel, distribution, distance = classifier.classify( (1,0,0) )
 if classlabel == "financial":
-    print "Classified correctly! Our accuracy is " + str(classifier.getAccuracy())
+    print("Classified correctly! Our accuracy is " + str(classifier.getAccuracy()))
 
 
 #Let's classify an ambiguous one:
 winningclasslabel, distribution, distance = classifier.classify( (1,1,1) )
 for classlabel, score in distribution.items():
-    print classlabel + ": " + str(score)
+    print(classlabel + ": " + str(score))
 
-print "Distance: ", distance
+print("Distance: ", distance)
 
 
 #We again start anew and build a test file
@@ -62,7 +65,7 @@ classifier.addinstance("testfile", (1,1,0),'geograpic' ) #this one will be wrong
 
 classifier.test("testfile")
 
-print "Accuracy: ", classifier.getAccuracy()
+print("Accuracy: ", classifier.getAccuracy())
 
 
 

@@ -100,11 +100,12 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
 	name="python3-timbl",
-	version="2013.03.29",
+	version="2013.03.29-1",
 	description="Python 3 language binding for the Tilburg Memory-Based Learner",
 	author="Sander Canisius, Maarten van Gompel",
 	author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",
 	url="http://github.com/proycon/python-timbl",
+	classifiers=["Development Status :: 4 - Beta","Topic :: Text Processing :: Linguistic","Topic :: Scientific/Engineering","Programming Language :: Python :: 3","Operating System :: POSIX","Intended Audience :: Developers","Intended Audience :: Science/Research","License :: OSI Approved :: GNU General Public License v3 (GPLv3)"],
 	license="GPL",
 	py_modules=['timbl'],
 	ext_modules=[timblModule],

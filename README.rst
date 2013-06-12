@@ -49,10 +49,9 @@ If both prerequisites have been installed on your system, python-timbl can be ob
 	$ git clone git://github.com/proycon/python-timbl.git
 	$ cd python-timbl
 
-and can then be built and installed with the following command::
+and can then be built and installed with the following command, use ``setup2.py`` for Python 2 and ``setup3.py`` for Python 3::
 
-
-        $ sudo python setup.py \
+        $ sudo python setup3.py \
                build_ext --boost-include-dir=$BOOST_HEADERS \
                          --boost-library-dir=$BOOST_LIBS \
                          --timbl-include-dir=$TIMBL_HEADERS  \
@@ -61,7 +60,7 @@ and can then be built and installed with the following command::
                
 This is the verbose variant, if default locations are used then the following may suffice already::
 
-        $ sudo python setup.py install               
+        $ sudo python setup3.py install               
                
 
 The ``--prefix`` option to the install command denotes the directory in which the module is to be installed. If you have the appropriate system permissions, you can leave out this option. The module will then be installed in the Python system tree. Otherwise, make sure that the installation directory is in the module search path of your Python

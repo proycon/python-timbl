@@ -31,6 +31,8 @@ def b(s):
     if sys.version < '3':
         if isinstance(s, unicode):
             return s.encode('utf-8')
+    else:
+        return s
     #else:
     #    if isinstance(s, str):
     #        return s.encode('utf-8')

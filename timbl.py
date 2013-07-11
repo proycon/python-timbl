@@ -5,7 +5,7 @@
 #   by Maarten van Gompel
 #   Radboud University Nijmegen
 
-# Licensed under GPL 
+# Licensed under GPL
 
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -31,10 +31,10 @@ def b(s):
     if sys.version < '3':
         if isinstance(s, unicode):
             return s.encode('utf-8')
-    else:            
+    else:
         if isinstance(s, str):
             return s.encode('utf-8')
-               
+
 def u(s, encoding = 'utf-8', errors='strict'):
     #ensure s is properly unicode.. wrapper for python 2.6/2.7,
     if sys.version < '3':
@@ -48,8 +48,8 @@ def u(s, encoding = 'utf-8', errors='strict'):
         if isinstance(s, str):
             return s
         else:
-            return str(s,encoding,errors=errors)               
-     
+            return str(s,encoding,errors=errors)
+
 
 class TimblClassifier(object):
     def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000):
@@ -59,76 +59,79 @@ class TimblClassifier(object):
         elif format.lower() == "columns":
             self.format = "Columns"
             self.delimiter = " "
-        else:            
+        else:
             raise ValueError("Only Tabbed and Columns are supported input format for the python wrapper, not " + format)
         self.timbloptions = timbloptions
         self.fileprefix = fileprefix
 
         self.encoding = encoding
         self.dist = dist
-        
-        self.flushthreshold = flushthreshold 
+
+        self.flushthreshold = flushthreshold
         self.instances = []
         self.api = None
-        
-        if os.path.exists(self.fileprefix + ".train") and overwrite:     
+
+        if os.path.exists(self.fileprefix + ".train") and overwrite:
             self.flushed = 0
         else:
             self.flushed = 1
-            
+
     def validatefeatures(self,features):
         """Returns features in validated form, or raises an Exception. Mostly for internal use"""
         validatedfeatures = []
-        for feature in features:                        
+        for feature in features:
             if isinstance(feature, int) or isinstance(feature, float):
                 validatedfeatures.append( str(feature) )
-            elif self.delimiter in feature: 
-                raise ValueError("Feature contains delimiter: " + feature)                
+            elif self.delimiter in feature:
+                raise ValueError("Feature contains delimiter: " + feature)
             else:
-                validatedfeatures.append(feature)        
+                validatedfeatures.append(feature)
         return validatedfeatures
-                        
-    def append(self, features, classlabel):        
-        if not isinstance(features, list) and not isinstance(features, tuple): 
-            raise ValueError("Expected list or tuple of features")        
-        
+
+    def append(self, features, classlabel):
+        if not isinstance(features, list) and not isinstance(features, tuple):
+            raise ValueError("Expected list or tuple of features")
+
         features = self.validatefeatures(features)
-                
-        if self.delimiter in classlabel: 
+
+        if self.delimiter in classlabel:
             raise ValueError("Class label contains delimiter: " + self.delimiter)
-                                        
+
         self.instances.append(self.delimiter.join(features) + self.delimiter + classlabel)
-        if len(self.instances) >= self.flushthreshold:  
+        if len(self.instances) >= self.flushthreshold:
             self.flush()
-        
-    def flush(self):        
+
+    def flush(self):
         if len(self.instances) == 0: return False
-        
+
         if self.flushed:
             f = io.open(self.fileprefix + ".train",'a', encoding=self.encoding)
         else:
             f = io.open(self.fileprefix + ".train",'w', encoding=self.encoding)
-        
-        for instance in self.instances: 
+
+        for instance in self.instances:
             f.write(instance +  "\n")
-        
+
         self.flushed += len(self.instances)
         f.close()
         self.instances = []
         return True
-    
+
     def __delete__(self):
         self.flush()
-                                    
-    def train(self, save=False):         
+
+    def train(self, save=False):
         self.flush()
-        if not os.path.exists(self.fileprefix + ".train"):      
+        if not os.path.exists(self.fileprefix + ".train"):
             raise Exception("Training file not found. Did you forget to add instances with append()?")
         options = "-F " + self.format + " " +  self.timbloptions
-        if self.dist:    
+        if self.dist:
             options += " +v+db +v+di"
-        print("Calling Timbl API for training: " + options, file=stderr) 
-        self.api = timblapi.TimblAPI(b(options), b"")
+        print("Calling Timbl API for training: " + options, file=stderr)
+        if sys.version < '3':
+            self.api = timblapi.TimblAPI(b(options), b"")
+        else:
+            self.api = timblapi.TimblAPI(options,"")
         trainfile = self.fileprefix + ".train"
         self.api.learn(b(trainfile))
         if save:
@@ -136,19 +139,19 @@ class TimblClassifier(object):
 
     def save(self):
         if not self.api:
-            raise Exception("No API instantiated, did you train the classifier first?")    
+            raise Exception("No API instantiated, did you train the classifier first?")
         self.api.writeInstanceBase(b(self.fileprefix + ".ibase"))
-        self.api.saveWeights(b(self.fileprefix + ".wgt"))            
+        self.api.saveWeights(b(self.fileprefix + ".wgt"))
 
     def classify(self, features):
-        
+
         features = self.validatefeatures(features)
-        
+
         if not self.api:
             self.load()
         testinstance = self.delimiter.join(features) + self.delimiter + "?"
         if self.dist:
-            result, cls, distribution, distance = self.api.classify3(b(testinstance))  
+            result, cls, distribution, distance = self.api.classify3(b(testinstance))
             cls = u(cls)
             distribution = u(distribution)
             return (cls, self._parsedistribution(distribution.split(' ')), distance)
@@ -156,43 +159,43 @@ class TimblClassifier(object):
             result, cls = self.api.classify(testinstance)
             cls = u(cls)
             return cls
-        
+
     def getAccuracy(self):
         if not self.api:
-            raise Exception("No API instantiated, did you train and test the classifier first?")   
+            raise Exception("No API instantiated, did you train and test the classifier first?")
         return self.api.getAccuracy()
-                
+
     def load(self):
         if not os.path.exists(self.fileprefix + ".ibase"):
             raise Exception("Instance base not found, did you train and save the classifier first?")
-        
+
         options = "-F " + self.format + " " +  self.timbloptions
-        self.api = timblapi.TimblAPI(b(options), b"") 
+        self.api = timblapi.TimblAPI(b(options), b"")
         print("Calling Timbl API : " + options,file=stderr)
         self.api.getInstanceBase(b(self.fileprefix + '.ibase'))
         #if os.path.exists(self.fileprefix + ".wgt"):
         #    self.api.getWeights(self.fileprefix + '.wgt')
-        
-    def addinstance(self, testfile, features, classlabel="?"):        
+
+    def addinstance(self, testfile, features, classlabel="?"):
         """Adds an instance to a specific file. Especially suitable for generating test files"""
-        
+
         features = self.validatefeatures(features)
-                
-        if self.delimiter in classlabel: 
+
+        if self.delimiter in classlabel:
             raise ValueError("Class label contains delimiter: " + self.delimiter)
 
-        
+
         f = io.open(testfile,'a', encoding=self.encoding)
         f.write(self.delimiter.join(features) + self.delimiter + classlabel + "\n")
         f.close()
-        
-    def test(self, testfile):        
+
+    def test(self, testfile):
         """Test on an existing testfile and return the accuracy"""
         if not self.api:
             self.load()
         self.api.test(b(testfile), b(self.fileprefix + '.out'),b'')
-        return self.api.getAccuracy()                        
-            
+        return self.api.getAccuracy()
+
     def readtestoutput(self):
         if not os.path.exists(self.fileprefix + ".out"):
             raise Exception("No test output available. Run test() first")
@@ -211,10 +214,10 @@ class TimblClassifier(object):
                         # we obtain the reverse and then apply index.
                         aux=list(reversed(segments)).index("{")
                         endfvec=len(segments)-aux-1
-                        #endfvec = segments.index("{")            
+                        #endfvec = segments.index("{")
                     except ValueError:
                         endfvec = None
-                            
+
                 if endfvec > 2: #only for +v+db
                     try:
                         enddistr = segments.index('}',endfvec)
@@ -229,15 +232,15 @@ class TimblClassifier(object):
                     endfvec = len(segments)
                     distribution = None
                     distance = None
-                                    
+
                 #features, referenceclass, predictedclass, distribution, distance
-                yield " ".join(segments[:endfvec - 2]).split(self.delimiter), segments[endfvec - 2], segments[endfvec - 1], distribution, distance               
+                yield " ".join(segments[:endfvec - 2]).split(self.delimiter), segments[endfvec - 2], segments[endfvec - 1], distribution, distance
         f.close()
-            
+
     def _parsedistribution(self, instance, start=0, end =None):
         dist = {}
         i = start + 1
-        
+
         if not end:
             end = len(instance) - 1
 
@@ -251,14 +254,14 @@ class TimblClassifier(object):
                 print("ERROR: timbl._parsedistribution -- Could not fetch score for class '" + label + "', expected float, but found '"+instance[i+1].rstrip(",")+"'. Instance= " + " ".join(instance)+ ".. Attempting to compensate...",file=stderr)
                 i = i - 1
             i += 2
-            
+
         if not dist:
             print("ERROR: timbl._parsedistribution --  Did not find class distribution for ", instance, file=stderr)
 
         return dist
 
-        
-    
-        
-        
-        
+
+
+
+
+

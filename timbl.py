@@ -31,9 +31,9 @@ def b(s):
     if sys.version < '3':
         if isinstance(s, unicode):
             return s.encode('utf-8')
-    else:
-        if isinstance(s, str):
-            return s.encode('utf-8')
+    #else:
+    #    if isinstance(s, str):
+    #        return s.encode('utf-8')
 
 def u(s, encoding = 'utf-8', errors='strict'):
     #ensure s is properly unicode.. wrapper for python 2.6/2.7,
@@ -170,7 +170,10 @@ class TimblClassifier(object):
             raise Exception("Instance base not found, did you train and save the classifier first?")
 
         options = "-F " + self.format + " " +  self.timbloptions
-        self.api = timblapi.TimblAPI(b(options), b"")
+        if sys.version < '3':
+            self.api = timblapi.TimblAPI(b(options), b"")
+        else:
+            self.api = timblapi.TimblAPI(options, "")
         print("Calling Timbl API : " + options,file=stderr)
         self.api.getInstanceBase(b(self.fileprefix + '.ibase'))
         #if os.path.exists(self.fileprefix + ".wgt"):

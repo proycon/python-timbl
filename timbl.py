@@ -128,7 +128,7 @@ class TimblClassifier(object):
     def train(self, save=False):
         self.flush()
         if not os.path.exists(self.fileprefix + ".train"):
-            raise LoadException("Training file not found. Did you forget to add instances with append()?")
+            raise LoadException("Training file '"+self.fileprefix+".train' not found. Did you forget to add instances with append()?")
         options = "-F " + self.format + " " +  self.timbloptions
         if self.dist:
             options += " +v+db +v+di"
@@ -172,7 +172,7 @@ class TimblClassifier(object):
 
     def load(self):
         if not os.path.exists(self.fileprefix + ".ibase"):
-            raise LoadException("Instance base not found, did you train and save the classifier first?")
+            raise LoadException("Instance base '"+self.fileprefix+".ibase' not found, did you train and save the classifier first?")
 
         options = "-F " + self.format + " " +  self.timbloptions
         if sys.version < '3':

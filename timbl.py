@@ -25,6 +25,9 @@ import timblapi
 import io
 import os
 
+class LoadException(Exception):
+    pass
+
 
 def b(s):
     """Conversion to bytes"""
@@ -125,7 +128,7 @@ class TimblClassifier(object):
     def train(self, save=False):
         self.flush()
         if not os.path.exists(self.fileprefix + ".train"):
-            raise Exception("Training file not found. Did you forget to add instances with append()?")
+            raise LoadException("Training file not found. Did you forget to add instances with append()?")
         options = "-F " + self.format + " " +  self.timbloptions
         if self.dist:
             options += " +v+db +v+di"
@@ -169,7 +172,7 @@ class TimblClassifier(object):
 
     def load(self):
         if not os.path.exists(self.fileprefix + ".ibase"):
-            raise Exception("Instance base not found, did you train and save the classifier first?")
+            raise LoadException("Instance base not found, did you train and save the classifier first?")
 
         options = "-F " + self.format + " " +  self.timbloptions
         if sys.version < '3':
@@ -203,7 +206,7 @@ class TimblClassifier(object):
 
     def readtestoutput(self):
         if not os.path.exists(self.fileprefix + ".out"):
-            raise Exception("No test output available. Run test() first")
+            raise LoadException("No test output available, expected '" + self.fileprefix + ".out' . Run test() first")
         f = io.open(self.fileprefix + '.out', 'r', encoding=self.encoding)
         for line in f:
             endfvec = None

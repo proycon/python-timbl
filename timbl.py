@@ -204,7 +204,7 @@ class TimblClassifier(object):
         if sys.version < '3':
             self.api.test(b(testfile), b(self.fileprefix + '.out'),b'')
         else:
-            self.api.test(u(testfile), u(self.fileprefix + '.out'),u'')
+            self.api.test(u(testfile), u(self.fileprefix + '.out'),'')
         return self.api.getAccuracy()
 
     def readtestoutput(self):

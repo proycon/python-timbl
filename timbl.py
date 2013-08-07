@@ -201,7 +201,10 @@ class TimblClassifier(object):
         """Test on an existing testfile and return the accuracy"""
         if not self.api:
             self.load()
-        self.api.test(b(testfile), b(self.fileprefix + '.out'),b'')
+        if sys.version < '3':
+            self.api.test(b(testfile), b(self.fileprefix + '.out'),b'')
+        else:
+            self.api.test(u(testfile), u(self.fileprefix + '.out'),u'')
         return self.api.getAccuracy()
 
     def readtestoutput(self):

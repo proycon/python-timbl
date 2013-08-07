@@ -36,7 +36,7 @@ class BuildExt(build_ext):
 		("timbl-include-dir=", None, "directory for TiMBL files"),
 		("timbl-library-dir=", None, "directory for TiMBL library files"),
 		("libxml2-include-dir=", None, "directory for LibXML2 files"),
-		("libxml2-library-dir=", None, "directory for LibXML2 library files"),		
+		("libxml2-library-dir=", None, "directory for LibXML2 library files"),
 		("static-boost-python3", "s", "statically link boost-python")]
 
 	boolean_options = build_ext.boolean_options + [
@@ -47,9 +47,9 @@ class BuildExt(build_ext):
 		self.boost_include_dir = "/usr/include"
 		self.boost_library_dir = "/usr/lib"
 		self.libxml2_include_dir = "/usr/include/libxml2"
-		self.libxml2_library_dir = "/usr/lib"		
+		self.libxml2_library_dir = "/usr/lib"
 		self.timbl_include_dir = "/usr/local/include"
-		self.timbl_library_dir = "/usr/local/lib"		
+		self.timbl_library_dir = "/usr/local/lib"
 		self.static_boost_python = False
 
 	def finalize_options(self):
@@ -72,7 +72,7 @@ class BuildExt(build_ext):
 	def build_extensions(self):
 		if newer("src/docstrings.h.in", "src/docstrings.h"):
 			updateDocHeader("src/docstrings.h.in", "src/docstrings.h")
-		
+
 		for ext in self.extensions:
 			ext.include_dirs.append(self.boost_include_dir)
 			ext.include_dirs.append(self.timbl_include_dir)
@@ -81,7 +81,7 @@ class BuildExt(build_ext):
 			ext.library_dirs.append(self.boost_library_dir)
 			ext.library_dirs.append(self.libxml2_library_dir)
 
-			pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 32 
+			pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 32
 
 			if isinstance(self.compiler, UnixCCompiler) and \
 				   self.static_boost_python:
@@ -100,7 +100,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
 	name="python3-timbl",
-	version="2013.03.29-1",
+	version="2013.08.07",
 	description="Python 3 language binding for the Tilburg Memory-Based Learner",
 	author="Sander Canisius, Maarten van Gompel",
 	author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

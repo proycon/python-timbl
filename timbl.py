@@ -209,23 +209,23 @@ class TimblClassifier(object):
 
 
     def crossvalidate(self, foldsfile):
-        """Test using cross validation, testfile is a file that contains the filenames of all the folds!"""
+        """Train & Test using cross validation, testfile is a file that contains the filenames of all the folds!"""
         if not self.api:
             options = "-F " + self.format + " " +  self.timbloptions + " -t cross_validate"
             if sys.version < '3':
                 self.api = timblapi.TimblAPI(b(options), b"")
             else:
                 self.api = timblapi.TimblAPI(options, "")
-        print("Calling Timbl API : " + options,file=stderr)
-        if sys.version < '3':
-            self.api.test(b(foldsfile))
-        else:
-            self.api.test(u(foldsfile))
-        return self.api.getAccuracy()
+                print("Calling Timbl API : " + options,file=stderr)
+                if sys.version < '3':
+                    self.api.test(b(foldsfile))
+                else:
+                    self.api.test(u(foldsfile))
+                    return self.api.getAccuracy()
 
 
     def leaveoneout(self):
-        """Test using leave one out"""
+        """Train & Test using leave one out"""
         traintestfile = self.fileprefix + '.train'
         if not self.api:
             options = "-F " + self.format + " " +  self.timbloptions + " -t leave_one_out"
@@ -233,11 +233,11 @@ class TimblClassifier(object):
                 self.api = timblapi.TimblAPI(b(options), b"")
             else:
                 self.api = timblapi.TimblAPI(options, "")
-        print("Calling Timbl API : " + options,file=stderr)
-        if sys.version < '3':
-            self.api.test(b(traintestfile), b(self.fileprefix + '.out'),b'')
-        else:
-            self.api.test(u(traintestfile), u(self.fileprefix + '.out'),'')
+                print("Calling Timbl API : " + options,file=stderr)
+                if sys.version < '3':
+                    self.api.test(b(traintestfile), b(self.fileprefix + '.out'),b'')
+                else:
+                    self.api.test(u(traintestfile), u(self.fileprefix + '.out'),'')
         return self.api.getAccuracy()
 
     def readtestoutput(self):

@@ -217,9 +217,9 @@ class TimblClassifier(object):
             self.api = timblapi.TimblAPI(options, "")
         print("Calling Timbl API : " + options,file=stderr)
         if sys.version < '3':
-            self.api.test(b(foldsfile))
+            self.api.test(b(foldsfile),b'',b'')
         else:
-            self.api.test(u(foldsfile))
+            self.api.test(u(foldsfile),'','')
         return self.api.getAccuracy()
 
 

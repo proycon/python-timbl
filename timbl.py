@@ -207,6 +207,18 @@ class TimblClassifier(object):
             self.api.test(u(testfile), u(self.fileprefix + '.out'),'')
         return self.api.getAccuracy()
 
+
+    def crossvalidate(self, foldsfile):
+        """Test using cross validation, testfile is a file that contains the filenames of all the folds! Timbl must have been instantiated with -t cross_validate !"""
+        if not self.api:
+            self.load()
+        if sys.version < '3':
+            self.api.test(b(foldsfile))
+        else:
+            self.api.test(u(foldsfile))
+        return self.api.getAccuracy()
+
+
     def readtestoutput(self):
         if not os.path.exists(self.fileprefix + ".out"):
             raise LoadException("No test output available, expected '" + self.fileprefix + ".out' . Run test() first")

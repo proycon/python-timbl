@@ -226,16 +226,17 @@ class TimblClassifier(object):
     def leaveoneout(self):
         """Train & Test using leave one out"""
         traintestfile = self.fileprefix + '.train'
-        options = " -f " + traintestfile + " -F " + self.format + " " +  self.timbloptions + " -t leave_one_out"
+        options = "-F " + self.format + " " +  self.timbloptions + " -t leave_one_out"
         if sys.version < '3':
             self.api = timblapi.TimblAPI(b(options), b"")
         else:
             self.api = timblapi.TimblAPI(options, "")
         print("Calling Timbl API : " + options,file=stderr)
-        self.api.learn(b(traintestfile))
         if sys.version < '3':
+            self.api.learn(b(traintestfile))
             self.api.test(b(traintestfile), b(self.fileprefix + '.out'),b'')
         else:
+            self.api.learn(u(traintestfile))
             self.api.test(u(traintestfile), u(self.fileprefix + '.out'),'')
         return self.api.getAccuracy()
 

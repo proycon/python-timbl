@@ -232,6 +232,7 @@ class TimblClassifier(object):
         else:
             self.api = timblapi.TimblAPI(options, "")
         print("Calling Timbl API : " + options,file=stderr)
+        self.api.learn(b(trainfile))
         if sys.version < '3':
             self.api.test(b(traintestfile), b(self.fileprefix + '.out'),b'')
         else:

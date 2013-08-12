@@ -211,16 +211,20 @@ class TimblClassifier(object):
     def crossvalidate(self, foldsfile):
         """Train & Test using cross validation, testfile is a file that contains the filenames of all the folds!"""
         options = "-F " + self.format + " " +  self.timbloptions + " -t cross_validate"
+        print("Instantiating Timbl API : " + options,file=stderr)
         if sys.version < '3':
             self.api = timblapi.TimblAPI(b(options), b"")
         else:
             self.api = timblapi.TimblAPI(options, "")
-        print("Calling Timbl API : " + options,file=stderr)
+        print("Calling Timbl Test : " + options,file=stderr)
         if sys.version < '3':
             self.api.test(b(foldsfile),b'',b'')
         else:
             self.api.test(u(foldsfile),'','')
-        return self.api.getAccuracy()
+        a = self.api.getAccuracy()
+        del self.api
+        return a
+
 
 
     def leaveoneout(self):

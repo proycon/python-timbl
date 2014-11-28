@@ -13,7 +13,7 @@ from distutils.unixccompiler import UnixCCompiler
 
 def updateDocHeader(input, output):
 	docstrings = {}
-	execfile(input, docstrings)
+	exec(compile(open(input, "rb").read(), input, 'exec'), docstrings)
 
 	stream = open(output, "w")
 	print("#ifndef TIMBL_DOC_H",file=stream)

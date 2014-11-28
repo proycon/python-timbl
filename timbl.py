@@ -28,6 +28,8 @@ import os
 class LoadException(Exception):
     pass
 
+class ClassifyException(Exception):
+    pass
 
 def b(s):
     """Conversion to bytes"""
@@ -157,13 +159,19 @@ class TimblClassifier(object):
         testinstance = self.delimiter.join(features) + self.delimiter + "?"
         if self.dist:
             result, cls, distribution, distance = self.api.classify3(b(testinstance))
-            cls = u(cls)
-            distribution = u(distribution)
-            return (cls, self._parsedistribution(distribution.split(' ')), distance)
+            if result:
+                cls = u(cls)
+                distribution = u(distribution)
+                return (cls, self._parsedistribution(distribution.split(' ')), distance)
+            else:
+                raise ClassifyException("Failed to classify: " + u(testinstance))
         else:
             result, cls = self.api.classify(testinstance)
-            cls = u(cls)
-            return cls
+            if result:
+                cls = u(cls)
+                return cls
+            else:
+                raise ClassifyException("Failed to classify: " + u(testinstance))
 
     def getAccuracy(self):
         if not self.api:

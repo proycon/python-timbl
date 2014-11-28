@@ -21,9 +21,9 @@ def updateDocHeader(input, output):
 	print("#include <Python.h>\n",file=stream)
 
 	for var in filter(lambda v: v.endswith("_DOC"), docstrings):
-		print("PyDoc_STRVAR(%s, \"%s\");\n" % (var, docstrings[var].strip().encode("string_escape")), file=stream)
+		print("PyDoc_STRVAR(%s, \"%s\");\n" % (var, docstrings[var].strip().encode('utf-8').encode("unicode_escape")), file=stream)
 
-	print >> stream, "#endif"
+	print("#endif", file=stream)
 
 	stream.close()
 
@@ -100,7 +100,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
 	name="python3-timbl",
-	version="2013.08.31",
+	version="2014.11.28",
 	description="Python 3 language binding for the Tilburg Memory-Based Learner",
 	author="Sander Canisius, Maarten van Gompel",
 	author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

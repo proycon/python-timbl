@@ -97,7 +97,7 @@ class BuildExt(build_ext):
 				ext.extra_link_args.extend(
 					"-Wl,-Bstatic -l" + boostlib + " -Wl,-Bdynamic".split())
 			else:
-				ext.libraries.append("boost_python-py" + pyversion)
+				ext.libraries.append(boostlib)
 
 		build_ext.build_extensions(self)
 

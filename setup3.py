@@ -21,7 +21,7 @@ def updateDocHeader(input, output):
 	print("#include <Python.h>\n",file=stream)
 
 	for var in filter(lambda v: v.endswith("_DOC"), docstrings):
-		print("PyDoc_STRVAR(%s, \"%s\");\n" % (var, str(docstrings[var].strip().encode("unicode_escape"), ascii) ), file=stream)
+		print("PyDoc_STRVAR(%s, \"%s\");\n" % (var, str(docstrings[var].strip().encode("unicode_escape"), 'ascii') ), file=stream)
 
 	print("#endif", file=stream)
 

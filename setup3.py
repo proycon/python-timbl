@@ -82,11 +82,11 @@ class BuildExt(build_ext):
 			ext.library_dirs.append(self.libxml2_library_dir)
 
 			pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 32
-			if os.path.exists(self.boost_library_dir + "/libboost_python-py"+pyversion):
+			if os.path.exists(self.boost_library_dir + "/libboost_python-py"+pyversion+".so"):
 				boostlib = "boost_python-py" + pyversion
-			elif os.path.exists(self.boost_library_dir + "/libboost_python3"):
+			elif os.path.exists(self.boost_library_dir + "/libboost_python3.sp"):
 				boostlib = "boost_python3"
-			elif os.path.exists(self.boost_library_dir + "/libboost_python"):
+			elif os.path.exists(self.boost_library_dir + "/libboost_python.so"):
 				#probably goes wrong if this is for python 2!
 				boostlib = "boost_python"
 			else:

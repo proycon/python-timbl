@@ -1,0 +1,2 @@
+include README.rst COPYING example.py timbl.py setup.py 
+recursive-include src *.cc *.h.in timblapi.h

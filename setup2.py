@@ -1,7 +1,8 @@
 #!/usr/bin/python
 import os
 import shutil
-shutil.copyfile("setup2.py","setup.py")
+if os.path.exists('setup2.py'):
+    shutil.copyfile("setup2.py","setup.py")
 
 from itertools import ifilter
 
@@ -105,7 +106,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python-timbl",
-    version="2015.03.19",
+    version="2015.05.20",
     description="Python language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

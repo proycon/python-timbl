@@ -49,7 +49,10 @@ class BuildExt(build_ext):
         self.boost_library_dir = "/usr/lib"
         self.libxml2_include_dir = "/usr/include/libxml2"
         self.libxml2_library_dir = "/usr/lib"
-        if os.path.exists("/usr/include/timbl"):
+        if 'VIRTUAL_ENV' in os.environ and os.path.exists(os.environ['VIRTUAL_ENV'] + '/include/timbl'):
+            self.timbl_include_dir = os.environ['VIRTUAL_ENV'] + '/include'
+            self.timbl_library_dir = os.environ['VIRTUAL_ENV'] + '/lib'
+        elif os.path.exists("/usr/include/timbl"):
             self.timbl_include_dir = "/usr/include"
             self.timbl_library_dir = "/usr/lib"
         elif os.path.exists("/usr/local/include/timbl"):
@@ -116,7 +119,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python3-timbl",
-    version="2015.05.20",
+    version="2015.05.20-2",
     description="Python 3 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

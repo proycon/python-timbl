@@ -92,6 +92,23 @@ class BuildExt(build_ext):
             ext.library_dirs.append(self.boost_library_dir)
             ext.library_dirs.append(self.libxml2_library_dir)
 
+            pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 27
+            if os.path.exists(self.boost_library_dir + "/libboost_python-py"+pyversion+".so"):
+                boostlib = "boost_python-py" + pyversion
+            elif os.path.exists(self.boost_library_dir + "/libboost_python2.so"):
+                boostlib = "boost_python2"
+            elif os.path.exists(self.boost_library_dir + "/libboost_python.so"):
+                #probably goes wrong if this is for python 3!
+                boostlib = "boost_python"
+            else:
+                print("Unable to find boost library",file=sys.stderr)
+                sys.exit(65)
+
+            if isinstance(self.compiler, UnixCCompiler) and self.static_boost_python:
+                ext.extra_link_args.extend(
+                    "-Wl,-Bstatic -l" + boostlib + " -Wl,-Bdynamic".split())
+            else:
+                ext.libraries.append(boostlib)
             if isinstance(self.compiler, UnixCCompiler) and \
                    self.static_boost_python:
                 ext.extra_link_args.extend(

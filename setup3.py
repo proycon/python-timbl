@@ -101,7 +101,7 @@ class BuildExt(build_ext):
                 boostlib = "boost_python"
             else:
                 print("Unable to find boost library",file=sys.stderr)
-                sys.exit(2)
+                sys.exit(65)
 
             if isinstance(self.compiler, UnixCCompiler) and self.static_boost_python:
                 ext.extra_link_args.extend(
@@ -119,7 +119,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python3-timbl",
-    version="2015.05.20-2",
+    version="2015.05.20-3",
     description="Python 3 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

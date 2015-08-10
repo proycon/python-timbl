@@ -46,6 +46,8 @@
 #ifndef TIMBL_H
 #define TIMBL_H
 
+#include "Python.h"
+
 #include <timbl/TimblAPI.h>
 
 #include <boost/python.hpp>
@@ -55,9 +57,10 @@ namespace python = boost::python;
 
 
 class TimblApiWrapper : public Timbl::TimblAPI {
+private:
+    PyThreadState * m_stread_state;
 public:
-	TimblApiWrapper(const std::string& args, const std::string& name="")
-		: Timbl::TimblAPI(args, name) {}
+	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { }
 
 	python::tuple classify(const std::string& line);
 	python::tuple classify2(const std::string& line);

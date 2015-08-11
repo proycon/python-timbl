@@ -93,18 +93,22 @@ tuple TimblApiWrapper::classify3(const std::string& line)
 tuple TimblApiWrapper::classify3safe(const std::string& line)
 {
     PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
+    initExperiment();
+    Timbl::TimblExperiment* exp = grabAndDisconnectExp();
     const Timbl::ValueDistribution * distrib; 
     double distance;
-	const Timbl::TargetValue * result = Classify(line, distrib,distance);
+    const Timbl::TargetValue * result = exp->Classify(line, distrib,distance);
     if (result != NULL) {
         const std::string cls = result->Name();
         const std::string diststring = distrib->DistToString();
         PyEval_RestoreThread(m_thread_state);
         m_thread_state = NULL;
+        delete exp;
         return make_tuple(true, cls, diststring, distance);
     } else {
         PyEval_RestoreThread(m_thread_state);
         m_thread_state = NULL; 
+        delete exp;
         return make_tuple(false,"","",0);
     }
 }

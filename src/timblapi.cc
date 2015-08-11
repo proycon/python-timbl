@@ -96,11 +96,17 @@ tuple TimblApiWrapper::classify3safe(const std::string& line)
     const Timbl::ValueDistribution * distrib; 
     double distance;
 	const Timbl::TargetValue * result = Classify(line, distrib,distance);
-	const std::string cls = result->Name();
-    const std::string diststring = distrib->DistToString();
-    PyEval_RestoreThread(m_thread_state);
-    m_thread_state = NULL;
-	return make_tuple(result, cls, diststring, distance);
+    if (result != NULL) {
+        const std::string cls = result->Name();
+        const std::string diststring = distrib->DistToString();
+        PyEval_RestoreThread(m_thread_state);
+        m_thread_state = NULL;
+        return make_tuple(true, cls, diststring, distance);
+    } else {
+        PyEval_RestoreThread(m_thread_state);
+        m_thread_state = NULL; 
+        return make_tuple(false,"","",0);
+    }
 }
 
 std::string TimblApiWrapper::bestNeighbours()

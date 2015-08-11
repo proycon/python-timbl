@@ -80,7 +80,7 @@ private:
 
 tuple TimblApiWrapper::classify(const std::string& line)
 { 
-    ScopedGILRelease gilrelease;
+    //ScopedGILRelease gilrelease;
 	std::string cls;
 	bool result = Classify(line, cls);
 	return make_tuple(result, cls);
@@ -89,7 +89,7 @@ tuple TimblApiWrapper::classify(const std::string& line)
 
 tuple TimblApiWrapper::classify2(const std::string& line)
 {
-    ScopedGILRelease gilrelease;
+    //ScopedGILRelease gilrelease;
 	std::string cls;
 	double distance;
 	bool result = Classify(line, cls, distance);
@@ -99,7 +99,7 @@ tuple TimblApiWrapper::classify2(const std::string& line)
 
 tuple TimblApiWrapper::classify3(const std::string& line)
 {
-    ScopedGILRelease gilrelease;
+    //ScopedGILRelease gilrelease;
 	std::string cls;
 	std::string distrib;
 	double distance;

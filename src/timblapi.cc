@@ -60,36 +60,50 @@
 
 using namespace boost::python;
 
+class ScopedGILRelease
+{
+public:
+    inline ScopedGILRelease()
+    {
+        m_thread_state = PyEval_SaveThread();
+    }
+
+    inline ~ScopedGILRelease()
+    {
+        PyEval_RestoreThread(m_thread_state);
+        m_thread_state = NULL;
+    }
+
+private:
+    PyThreadState * m_thread_state;
+};
 
 tuple TimblApiWrapper::classify(const std::string& line)
 { 
-    PyThreadState *_save = PyEval_SaveThread(); //release GIL
+    ScopedGILRelease gilrelease;
 	std::string cls;
 	bool result = Classify(line, cls);
-    PyEval_RestoreThread(_save);
 	return make_tuple(result, cls);
 }
 
 
 tuple TimblApiWrapper::classify2(const std::string& line)
 {
-    PyThreadState *_save = PyEval_SaveThread(); //release GIL
+    ScopedGILRelease gilrelease;
 	std::string cls;
 	double distance;
 	bool result = Classify(line, cls, distance);
-    PyEval_RestoreThread(_save);
 	return make_tuple(result, cls, distance);
 }
 
 
 tuple TimblApiWrapper::classify3(const std::string& line)
 {
-    PyThreadState *_save = PyEval_SaveThread(); //release GIL
+    ScopedGILRelease gilrelease;
 	std::string cls;
 	std::string distrib;
 	double distance;
 	bool result = Classify(line, cls, distrib, distance);
-    PyEval_RestoreThread(_save);
 	return make_tuple(result, cls, distrib, distance);
 }
 

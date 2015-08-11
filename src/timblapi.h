@@ -58,7 +58,7 @@ namespace python = boost::python;
 
 class TimblApiWrapper : public Timbl::TimblAPI {
 private:
-    PyThreadState * m_stread_state;
+    PyThreadState * m_thread_state;
 public:
 	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { }
 

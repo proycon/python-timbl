@@ -150,7 +150,7 @@ class TimblClassifier(object):
         self.api.writeInstanceBase(b(self.fileprefix + ".ibase"))
         self.api.saveWeights(b(self.fileprefix + ".wgt"))
 
-    def classify(self, features):
+    def classify(self, features, threadsafe=False):
 
         features = self.validatefeatures(features)
 
@@ -158,7 +158,10 @@ class TimblClassifier(object):
             self.load()
         testinstance = self.delimiter.join(features) + self.delimiter + "?"
         if self.dist:
-            result, cls, distribution, distance = self.api.classify3(b(testinstance))
+            if threadsafe:
+                result, cls, distribution, distance = self.api.classify3safe(b(testinstance))
+            else:
+                result, cls, distribution, distance = self.api.classify3(b(testinstance))
             if result:
                 cls = u(cls)
                 distribution = u(distribution)

@@ -107,6 +107,16 @@ tuple TimblApiWrapper::classify3(const std::string& line)
 	return make_tuple(result, cls, distrib, distance);
 }
 
+tuple TimblApiWrapper::classify3safe(const std::string& line)
+{
+    ScopedGILRelease gilrelease;
+    const Timbl::ValueDistribution * distrib; 
+    double distance;
+	const Timbl::TargetValue * result = Classify(line, distrib,distance);
+	const std::string cls = result->Name();
+    const std::string diststring = distrib->DistToString();
+	return make_tuple(result, cls, diststring, distance);
+}
 
 std::string TimblApiWrapper::bestNeighbours()
 {

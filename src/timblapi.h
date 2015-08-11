@@ -65,6 +65,7 @@ public:
 	python::tuple classify(const std::string& line);
 	python::tuple classify2(const std::string& line);
 	python::tuple classify3(const std::string& line);
+	python::tuple classify3safe(const std::string& line);
 
 	std::string bestNeighbours();
 	bool showBestNeighbours(python::object& stream);

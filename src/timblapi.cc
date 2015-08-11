@@ -97,10 +97,10 @@ tuple TimblApiWrapper::classify3safe(const std::string& line)
     double distance;
 	const Timbl::TargetValue * result = Classify(line, distrib,distance);
     if (result != NULL) {
-        PyEval_RestoreThread(m_thread_state);
-        m_thread_state = NULL;
         const std::string cls = result->Name();
         const std::string diststring = distrib->DistToString();
+        PyEval_RestoreThread(m_thread_state);
+        m_thread_state = NULL;
         return make_tuple(true, cls, diststring, distance);
     } else {
         PyEval_RestoreThread(m_thread_state);

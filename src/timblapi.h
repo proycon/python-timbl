@@ -59,8 +59,12 @@ namespace python = boost::python;
 class TimblApiWrapper : public Timbl::TimblAPI {
 private:
     PyThreadState * m_thread_state;
+    TimblExperiment * detachedexp;
 public:
-	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { }
+	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; }
+    ~TimblApiWrapper() : Timbl::~TimblAPI() { if (detachedexp != NULL) delete detachedexp; }
+
+    void initthreading();
 
 	python::tuple classify(const std::string& line);
 	python::tuple classify2(const std::string& line);

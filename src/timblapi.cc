@@ -96,7 +96,7 @@ tuple TimblApiWrapper::classify3safe(const std::string& line)
     initExperiment();
     Timbl::TimblExperiment * exp = grabAndDisconnectExp();
     Timbl::TimblExperiment * clonedexp = exp->clone();
-    *exp = *clonedexp;
+    *clonedexp = *exp;
     const Timbl::ValueDistribution * distrib; 
     double distance;
     const Timbl::TargetValue * result = exp->Classify(line, distrib,distance);

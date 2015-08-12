@@ -64,7 +64,6 @@ using namespace boost::python;
 
 tuple TimblApiWrapper::classify(const std::string& line)
 { 
-    //ScopedGILRelease gilrelease;
 	std::string cls;
 	bool result = Classify(line, cls);
 	return make_tuple(result, cls);
@@ -73,7 +72,6 @@ tuple TimblApiWrapper::classify(const std::string& line)
 
 tuple TimblApiWrapper::classify2(const std::string& line)
 {
-    //ScopedGILRelease gilrelease;
 	std::string cls;
 	double distance;
 	bool result = Classify(line, cls, distance);
@@ -81,17 +79,19 @@ tuple TimblApiWrapper::classify2(const std::string& line)
 }
 
 
-tuple TimblApiWrapper::classify3(const std::string& line)
+tuple TimblApiWrapper::classify3(const std::string& line, const unsigned char requireddepth)
 {
-    //ScopedGILRelease gilrelease;
 	std::string cls;
 	std::string distrib;
 	double distance;
 	bool result = Classify(line, cls, distrib, distance);
+    if ((result) && (requireddepth > 0) && (matchDepth() < requireddepth)) {
+        return make_tuple(result, "", "", 999999);
+    }
 	return make_tuple(result, cls, distrib, distance);
 }
 
-tuple TimblApiWrapper::classify3safe(const std::string& line)
+tuple TimblApiWrapper::classify3safe(const std::string& line, const unsigned char requireddepth)
 {
     PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
     
@@ -120,11 +120,17 @@ tuple TimblApiWrapper::classify3safe(const std::string& line)
     double distance;
     const Timbl::TargetValue * result = clonedexp->Classify(line, distrib,distance);
     if (result != NULL) {
-        const std::string cls = result->Name();
-        const std::string diststring = distrib->DistToString();
-        PyEval_RestoreThread(m_thread_state);
-        m_thread_state = NULL;
-        return make_tuple(true, cls, diststring, distance);
+        if ((requireddepth > 0) && (clonedexp->matchDepth() < requireddepth)) {
+            PyEval_RestoreThread(m_thread_state);
+            m_thread_state = NULL;
+            return make_tuple(true, "", "", 999999);
+        } else {
+            const std::string cls = result->Name();
+            const std::string diststring = distrib->DistToString();
+            PyEval_RestoreThread(m_thread_state);
+            m_thread_state = NULL;
+            return make_tuple(true, cls, diststring, distance);
+        }
     } else {
         PyEval_RestoreThread(m_thread_state);
         m_thread_state = NULL; 

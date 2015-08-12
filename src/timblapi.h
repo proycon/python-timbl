@@ -75,8 +75,8 @@ public:
 
 	python::tuple classify(const std::string& line);
 	python::tuple classify2(const std::string& line);
-	python::tuple classify3(const std::string& line);
-	python::tuple classify3safe(const std::string& line);
+	python::tuple classify3(const std::string& line, const unsigned char requireddepth=0);
+	python::tuple classify3safe(const std::string& line, const unsigned char requireddepth=0);
 
 	std::string bestNeighbours();
 	bool showBestNeighbours(python::object& stream);
@@ -89,6 +89,8 @@ public:
 
 	std::string weights();
 	bool showWeights(python::object& stream);
+
+    size_t matchDepth();
 };
 
 #endif

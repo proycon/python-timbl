@@ -218,7 +218,6 @@ bool TimblApiWrapper::showSettings(object& stream)
 python::dict TimblApiWrapper::dist2dict(const Timbl::ValueDistribution * distribution, double minf) const {
     python::dict result;
 
-    std::ostringstream oss;
     size_t freq;
 
     Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin();
@@ -226,9 +225,7 @@ python::dict TimblApiWrapper::dist2dict(const Timbl::ValueDistribution * distrib
         Timbl::Vfield *f = it->second;
         freq = f->Freq();
         if ( freq >= minf ){
-            oss << f;
-            result[oss.str()] = freq;
-            oss.str(""); oss.clear(); //clear for next use
+            result[f->Value()->Name()] = freq;
         }
         ++it;
     }

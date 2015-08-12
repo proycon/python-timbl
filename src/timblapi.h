@@ -90,7 +90,6 @@ public:
 	std::string weights();
 	bool showWeights(python::object& stream);
 
-    size_t matchDepth();
 };
 
 #endif

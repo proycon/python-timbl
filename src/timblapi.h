@@ -64,7 +64,12 @@ private:
     Timbl::TimblExperiment * detachedexp;
 public:
 	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; }
-    ~TimblApiWrapper() { if (detachedexp != NULL) delete detachedexp; }
+    ~TimblApiWrapper() { 
+        if (detachedexp != NULL) delete detachedexp; 
+        for (std::map<pthread_t,Timbl::TimblExperiment *>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
+            delete iter->second;
+        }
+    }
 
     void initthreading();
 

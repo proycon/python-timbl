@@ -287,9 +287,9 @@ BOOST_PYTHON_MODULE(timblapi)
 		.def("classify", &TimblApiWrapper::classify, CLASSIFY_DOC)
 		.def("classify2", &TimblApiWrapper::classify2, CLASSIFY2_DOC)
 		.def("classify3", &TimblApiWrapper::classify3, CLASSIFY3_DOC)
-		.def("classify3safe", &TimblApiWrapper::classify3safe, CLASSIFY3_DOC)
+		.def("classify3safe", &TimblApiWrapper::classify3safe, CLASSIFY3SAFE_DOC)
 
-		.def("initthreading", &TimblApiWrapper::initthreading, CLASSIFY3_DOC)
+		.def("initthreading", &TimblApiWrapper::initthreading, INITTHREADING_DOC)
 
 		.def("showBestNeighbours", &TimblApiWrapper::showBestNeighbours,
 				 SHOWBESTNEIGHBOURS_DOC)

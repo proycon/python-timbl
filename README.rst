@@ -72,7 +72,7 @@ Usage
 python-timbl offers two interface to the timbl API. A low-level interface contained in the module ``timblapi``, which is very much like the C++ library, and a high-level object oriented interface in the ``timbl`` module, which offers a ``TimblClassifier`` class. 
 
 timbl.TimblClassifier: High-level interface
-----------------------
+----------------------------------------------
 
 The high-level interface features as ``TimblClassifier`` class which can be used for training and testing classifiers. An example is provided in ``example.py``, parts of it will be discussed here.
 
@@ -104,7 +104,7 @@ The results of this training is an instance base file, which you can save to fil
 The main advantage of the Python library is the fact that you can classify instances on the fly as follows, just pass a feature vector and optionally also a class label to ``classify(featurevector, classlabel)``::
 
 	classlabel, distribution, distance = classifier.classify( (1,0,0) )
-	
+
 You can also create a test file and test it all at once::
 
 	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )
@@ -116,10 +116,25 @@ You can also create a test file and test it all at once::
 	classifier.test("testfile")
 
 	print "Accuracy: ", classifier.getAccuracy()
-	
 
+
+Real multithreading support
+-----------------------------
+
+If you are writing a multithreaded Python application (i.e. using the
+``threading`` module) and want to benefit from actual concurrency,
+side-stepping Python's Global Interpreter Lock, add the parameter
+``threading=True`` when invoking the ``TimblClassifier`` constructor.  Take
+care to instantiate ``TimblClassifier`` *before* threading. You can then call
+``TimblClassifier.classify()`` from within your threads.  Concurrency only
+exists for this ``classify`` method.
+
+If you do not set this option, everything will still work fine, but you won't benefit
+from actual concurrency due to Python's the Global Interpret Lock.
+
+	
 timblapi: Low-level interface
--------------------------
+-------------------------------
 
 For documentation on the low level ``timblapi`` interface you can consult the TiMBL API guide.  Although this document actually describes the C++ interface to TiMBL, the latter is similar enough to its Python binding for this document to be a useful reference for python-timbl as well. For most part, the Python TiMBL interface follows the C++ version closely. The differences are listed below.
 
@@ -138,7 +153,7 @@ Method overloading TiMBL's ``Classify`` methods use the C++ method overloading f
 	#                         std::string& result,
 	#                         double& distance);
 	#
-	def TimblAPI.classify2(line) -> bool, result, distance
+	def TimblAPI.classify2(line) -> bool, string, distance
 
 	#
 	# bool TimblAPI::Classify(const std::string& Line,
@@ -146,7 +161,17 @@ Method overloading TiMBL's ``Classify`` methods use the C++ method overloading f
 	#                         std::string& Distrib,
 	#                         double& distance);
 	#
-	def TimblAPI.classify3(line) -> bool, result, Distrib, distance
+	def TimblAPI.classify3(line, requireddepth=0) -> bool, string, dictionary, distance
+
+    #Thread-safe version of the above, releases and reacquires Python's Global Interprer Lock
+	def TimblAPI.classify3safe(line, requireddepth=0) -> bool, string, dictionary, distance
+
+
+Note that the ``classify3`` function returned a string representation of the
+distribution in versions of python-timbl prior to 2015.08.12, now it returns an
+actual dictionary. When using ``classify3safe`` (the thread-safe version) ,
+ensure you first call initthreads after instantiating ``timblapi``, and
+manually call the ``initthreading()`` method.
 
 
 **Python-only methods**

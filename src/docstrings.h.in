@@ -269,7 +269,7 @@ for a given test instance.
 
 
 CLASSIFY3_DOC = """
-self.classify3(instance)
+self.classify3(instance,requireddepth=0)
 
 Return the predicted class, the class distribution, and the distance
 of the nearest neighbour for a given test instance.
@@ -279,12 +279,42 @@ of the nearest neighbour for a given test instance.
       a string representation of the test instance. The format of this
       string is the same as used by the TiMBL command-line
       application.
+  `requireddepth`: int
+      integer indicating the required depth necessary for a distribution to be
+      returned. Only works with IGTree, it enforces the number of features that
+      must match, zero (the default) corresponds to a top level distribution,
+      higher values will result in no distribution being returned if the
+      required depth is not reached, this improves performance.
+  
+ 
 
 :return: (boolean signalling success or failure, the predicted class,
           class distribution, distance of the nearest neighbour)
-:rtype: (bool, str, str, float)
+:rtype: (bool, str, dict, float)
 """
 
+CLASSIFY3SAFE_DOC = """
+self.classify3safe(instance, requireddepth=0)
+
+Return the predicted class, the class distribution, and the distance
+of the nearest neighbour for a given test instance.
+
+:Parameters:
+  `instance` : str
+      a string representation of the test instance. The format of this
+      string is the same as used by the TiMBL command-line
+      application.
+  `requireddepth`: int
+      integer indicating the required depth necessary for a distribution to be
+      returned. Only works with IGTree, it enforces the number of features that
+      must match, zero (the default) corresponds to a top level distribution,
+      higher values will result in no distribution being returned if the
+      required depth is not reached, this improves performance.
+
+:return: (boolean signalling success or failure, the predicted class,
+          class distribution, distance of the nearest neighbour)
+:rtype: (bool, str, dict, float)
+"""
 
 SHOWBESTNEIGHBOURS_DOC = """
 self.showBestNeighbours(stream, distr)
@@ -491,3 +521,10 @@ Return the output of the showSettings method as a string.
 :return: the output of the showSettings method
 :rtype: str
 """
+
+INITTHREADING_DOC = """
+self.initthreading()
+
+Initialised multi-threading, to be issues *before* doing the threading. Then allows for usage of classify3safe() from with the actual threads. Using the non-thread-safe methods after initthreading will cause segfaults!
+"""
+

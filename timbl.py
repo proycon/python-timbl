@@ -168,8 +168,12 @@ class TimblClassifier(object):
                 result, cls, distribution, distance = self.api.classify3(b(testinstance), int(not allowtopdistribution))
             if result:
                 cls = u(cls)
-                distribution = u(distribution)
-                return (cls, self._parsedistribution(distribution.split(' ')), distance)
+                return (cls, distribution, distance)
+                #distribution = u(distribution)
+                #if cls:
+                #    return (cls, self._parsedistribution(distribution.split(' ')), distance)
+                #else:
+                #   return (cls, {}, distance)
             else:
                 raise ClassifyException("Failed to classify: " + u(testinstance))
         else:

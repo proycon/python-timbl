@@ -62,6 +62,7 @@ class TimblApiWrapper : public Timbl::TimblAPI {
 private:
     std::map<pthread_t,Timbl::TimblExperiment *> experimentpool;
     Timbl::TimblExperiment * detachedexp;
+    python::dict dist2dict(const Timbl::ValueDistribution * dist, double=0) const;
 public:
 	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; }
     ~TimblApiWrapper() { 

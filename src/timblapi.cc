@@ -46,6 +46,7 @@
 
 #include "timblapi.h"
 #include "timbl/GetOptClass.h"
+#include "timbl/Instance.h"
 #include "docstrings.h"
 
 #include <unistd.h>
@@ -82,13 +83,19 @@ tuple TimblApiWrapper::classify2(const std::string& line)
 tuple TimblApiWrapper::classify3(const std::string& line, const unsigned char requireddepth)
 {
 	std::string cls;
-	std::string distrib;
 	double distance;
-	bool result = Classify(line, cls, distrib, distance);
-    if ((result) && (requireddepth > 0) && (matchDepth() < requireddepth)) {
-        return make_tuple(result, "", "", 999999);
+    const Timbl::ValueDistribution * distrib; 
+    const Timbl::TargetValue * result  = Classify(line, distrib , distance);
+    if (result != NULL) {
+        if ((requireddepth > 0) && (matchDepth() < requireddepth)) {
+            return make_tuple(true, "", python::dict(), 999999);
+        } else {
+            const std::string cls = result->Name();
+            return make_tuple(true, cls, dist2dict(distrib), distance);
+        }
+    } else {
+        return make_tuple(false,"",python::dict(),999999);
     }
-	return make_tuple(result, cls, distrib, distance);
 }
 
 tuple TimblApiWrapper::classify3safe(const std::string& line, const unsigned char requireddepth)
@@ -123,18 +130,18 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, const unsigned cha
         if ((requireddepth > 0) && (clonedexp->matchDepth() < requireddepth)) {
             PyEval_RestoreThread(m_thread_state);
             m_thread_state = NULL;
-            return make_tuple(true, "", "", 999999);
+            return make_tuple(true, "", python::dict(), 999999);
         } else {
             const std::string cls = result->Name();
-            const std::string diststring = distrib->DistToString();
+            //const std::string diststring = distrib->DistToString();
             PyEval_RestoreThread(m_thread_state);
             m_thread_state = NULL;
-            return make_tuple(true, cls, diststring, distance);
+            return make_tuple(true, cls, dist2dict(distrib), distance);
         }
     } else {
         PyEval_RestoreThread(m_thread_state);
         m_thread_state = NULL; 
-        return make_tuple(false,"","",0);
+        return make_tuple(false,"",python::dict(),999999);
     }
 }
 
@@ -205,6 +212,28 @@ bool TimblApiWrapper::showSettings(object& stream)
 	#endif
 	std::ostream out(&fdbuf);
 	return ShowSettings(out);
+}
+
+
+python::dict TimblApiWrapper::dist2dict(const Timbl::ValueDistribution * distribution, double minf) const {
+    python::dict result;
+
+    std::ostringstream oss;
+    size_t freq;
+
+    Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin();
+    while ( it != distribution->end() ){
+        Timbl::Vfield *f = it->second;
+        freq = f->Freq();
+        if ( freq >= minf ){
+            oss << f;
+            result[oss.str()] = freq;
+            oss.str(""); oss.clear(); //clear for next use
+        }
+        ++it;
+    }
+
+    return result;
 }
 
 /*std::string TimblApiWrapper::weights()
@@ -321,3 +350,6 @@ BOOST_PYTHON_MODULE(timblapi)
 	
 	//def("to_string", to_string);
 }
+
+
+

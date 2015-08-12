@@ -199,7 +199,8 @@ class TimblClassifier(object):
         #if os.path.exists(self.fileprefix + ".wgt"):
         #    self.api.getWeights(self.fileprefix + '.wgt')
         if self.threading:
-            self.api.initthreading()
+            pass
+            #self.api.initthreading()
 
     def addinstance(self, testfile, features, classlabel="?"):
         """Adds an instance to a specific file. Especially suitable for generating test files"""

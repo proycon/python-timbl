@@ -95,6 +95,9 @@ tuple TimblApiWrapper::classify3safe(const std::string& line)
     PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
     Timbl::TimblExperiment * clonedexp = detachedexp->clone();
     *clonedexp = *detachedexp;
+    if ( detachedexp->getOptParams() ){
+        clonedexp->setOptParams( detachedexp->getOptParams()->Clone() );
+    }
     const Timbl::ValueDistribution * distrib; 
     double distance;
     const Timbl::TargetValue * result = clonedexp->Classify(line, distrib,distance);

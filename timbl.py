@@ -59,7 +59,7 @@ def u(s, encoding = 'utf-8', errors='strict'):
 
 
 class TimblClassifier(object):
-    def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000):
+    def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000, threading=False):
         if format.lower() == "tabbed":
             self.format = "Tabbed"
             self.delimiter = "\t"
@@ -82,6 +82,8 @@ class TimblClassifier(object):
             self.flushed = 0
         else:
             self.flushed = 1
+
+        self.threading = threading
 
     def validatefeatures(self,features):
         """Returns features in validated form, or raises an Exception. Mostly for internal use"""
@@ -143,6 +145,8 @@ class TimblClassifier(object):
         self.api.learn(b(trainfile))
         if save:
             self.save()
+        if self.threading:
+            self.api.initthreading()
 
     def save(self):
         if not self.api:
@@ -194,6 +198,8 @@ class TimblClassifier(object):
         self.api.getInstanceBase(b(self.fileprefix + '.ibase'))
         #if os.path.exists(self.fileprefix + ".wgt"):
         #    self.api.getWeights(self.fileprefix + '.wgt')
+        if self.threading:
+            self.api.initthreading()
 
     def addinstance(self, testfile, features, classlabel="?"):
         """Adds an instance to a specific file. Especially suitable for generating test files"""

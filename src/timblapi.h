@@ -52,13 +52,15 @@
 
 #include <boost/python.hpp>
 #include <string>
+#include <map>
+#include <pthread.h>
 
 namespace python = boost::python;
 
 
 class TimblApiWrapper : public Timbl::TimblAPI {
 private:
-    PyThreadState * m_thread_state;
+    std::map<pthread_t,Timbl::TimblExperiment *> experimentpool;
     Timbl::TimblExperiment * detachedexp;
 public:
 	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; }

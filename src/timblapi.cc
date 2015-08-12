@@ -238,6 +238,8 @@ BOOST_PYTHON_MODULE(timblapi)
 		.def("classify3", &TimblApiWrapper::classify3, CLASSIFY3_DOC)
 		.def("classify3safe", &TimblApiWrapper::classify3safe, CLASSIFY3_DOC)
 
+		.def("initthreading", &TimblApiWrapper::initthreading, CLASSIFY3_DOC)
+
 		.def("showBestNeighbours", &TimblApiWrapper::showBestNeighbours,
 				 SHOWBESTNEIGHBOURS_DOC)
 		.def("showBestNeighbors", &TimblApiWrapper::showBestNeighbours,

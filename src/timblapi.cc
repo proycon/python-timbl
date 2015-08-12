@@ -95,17 +95,25 @@ tuple TimblApiWrapper::classify3safe(const std::string& line)
 {
     PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
     
+
+    
     pthread_t thisthread = pthread_self();
     Timbl::TimblExperiment * clonedexp;
+    pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; //global lock
+    pthread_mutex_lock(&lock);
     if (experimentpool.find(thisthread) != experimentpool.end()) {
         clonedexp = experimentpool[thisthread];
+        pthread_mutex_unlock(&lock);
     } else {
+        pthread_mutex_unlock(&lock);
         clonedexp = detachedexp->clone();
         *clonedexp = *detachedexp; //ugly but needed
         if ( detachedexp->getOptParams() ){
             clonedexp->setOptParams( detachedexp->getOptParams()->Clone(0) );
         }
+        pthread_mutex_lock(&lock);
         experimentpool[thisthread] = clonedexp;
+        pthread_mutex_unlock(&lock);
     }
 
     const Timbl::ValueDistribution * distrib; 

@@ -45,6 +45,7 @@
 
 
 #include "timblapi.h"
+#include "timbl/GetOptClass.h"
 #include "docstrings.h"
 
 #include <unistd.h>
@@ -96,7 +97,7 @@ tuple TimblApiWrapper::classify3safe(const std::string& line)
     Timbl::TimblExperiment * clonedexp = detachedexp->clone();
     *clonedexp = *detachedexp;
     if ( detachedexp->getOptParams() ){
-        clonedexp->setOptParams( detachedexp->getOptParams()->Clone() );
+        clonedexp->setOptParams( detachedexp->getOptParams()->Clone(0) );
     }
     const Timbl::ValueDistribution * distrib; 
     double distance;

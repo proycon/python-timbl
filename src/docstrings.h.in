@@ -269,7 +269,7 @@ for a given test instance.
 
 
 CLASSIFY3_DOC = """
-self.classify3(instance,requireddepth=0)
+self.classify3(instance,normalize=true,requireddepth=0)
 
 Return the predicted class, the class distribution, and the distance
 of the nearest neighbour for a given test instance.
@@ -279,6 +279,8 @@ of the nearest neighbour for a given test instance.
       a string representation of the test instance. The format of this
       string is the same as used by the TiMBL command-line
       application.
+  `normalize`: bool
+      normalize the resulting distribution? (note that the Timbl -G option is ineffective)
   `requireddepth`: int
       integer indicating the required depth necessary for a distribution to be
       returned. Only works with IGTree, it enforces the number of features that
@@ -294,7 +296,7 @@ of the nearest neighbour for a given test instance.
 """
 
 CLASSIFY3SAFE_DOC = """
-self.classify3safe(instance, requireddepth=0)
+self.classify3safe(instance, normalize=true, requireddepth=0)
 
 Return the predicted class, the class distribution, and the distance
 of the nearest neighbour for a given test instance.
@@ -304,6 +306,8 @@ of the nearest neighbour for a given test instance.
       a string representation of the test instance. The format of this
       string is the same as used by the TiMBL command-line
       application.
+  `normalize`: bool
+      normalize the resulting distribution?(note that the Timbl -G option is ineffective)
   `requireddepth`: int
       integer indicating the required depth necessary for a distribution to be
       returned. Only works with IGTree, it enforces the number of features that

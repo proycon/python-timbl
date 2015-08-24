@@ -34,7 +34,7 @@ class ClassifyException(Exception):
 def b(s):
     """Conversion to bytes"""
     if sys.version < '3':
-        if isinstance(s, unicode):
+        if isinstance(s, unicode): #pylint: disable=undefined-variable
             return s.encode('utf-8')
     else:
         return s
@@ -46,10 +46,10 @@ def u(s, encoding = 'utf-8', errors='strict'):
     #ensure s is properly unicode.. wrapper for python 2.6/2.7,
     if sys.version < '3':
         #ensure the object is unicode
-        if isinstance(s, unicode):
+        if isinstance(s, unicode): #pylint: disable=undefined-variable
             return s
         else:
-            return unicode(s, encoding,errors=errors)
+            return unicode(s, encoding,errors=errors) #pylint: disable=undefined-variable
     else:
         #will work on byte arrays
         if isinstance(s, str):
@@ -59,7 +59,7 @@ def u(s, encoding = 'utf-8', errors='strict'):
 
 
 class TimblClassifier(object):
-    def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000, threading=False):
+    def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000, threading=False, normalize=True):
         if format.lower() == "tabbed":
             self.format = "Tabbed"
             self.delimiter = "\t"
@@ -73,6 +73,8 @@ class TimblClassifier(object):
 
         self.encoding = encoding
         self.dist = dist
+
+        self.normalize= normalize
 
         self.flushthreshold = flushthreshold
         self.instances = []
@@ -163,9 +165,9 @@ class TimblClassifier(object):
         testinstance = self.delimiter.join(features) + self.delimiter + "?"
         if self.dist:
             if self.threading:
-                result, cls, distribution, distance = self.api.classify3safe(b(testinstance), int(not allowtopdistribution))
+                result, cls, distribution, distance = self.api.classify3safe(b(testinstance), self.normalize, int(not allowtopdistribution))
             else:
-                result, cls, distribution, distance = self.api.classify3(b(testinstance), int(not allowtopdistribution))
+                result, cls, distribution, distance = self.api.classify3(b(testinstance), self.normalize, int(not allowtopdistribution))
             if result:
                 cls = u(cls)
                 return (cls, distribution, distance)

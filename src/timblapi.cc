@@ -80,7 +80,7 @@ tuple TimblApiWrapper::classify2(const std::string& line)
 }
 
 
-tuple TimblApiWrapper::classify3(const std::string& line, const unsigned char requireddepth)
+tuple TimblApiWrapper::classify3(const std::string& line, bool normalize, const unsigned char requireddepth)
 {
 	std::string cls;
 	double distance;
@@ -91,14 +91,14 @@ tuple TimblApiWrapper::classify3(const std::string& line, const unsigned char re
             return make_tuple(true, "", python::dict(), 999999);
         } else {
             const std::string cls = result->Name();
-            return make_tuple(true, cls, dist2dict(distrib), distance);
+            return make_tuple(true, cls, dist2dict(distrib, normalize), distance);
         }
     } else {
         return make_tuple(false,"",python::dict(),999999);
     }
 }
 
-tuple TimblApiWrapper::classify3safe(const std::string& line, const unsigned char requireddepth)
+tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,const unsigned char requireddepth)
 {
     PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
     
@@ -136,7 +136,7 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, const unsigned cha
             //const std::string diststring = distrib->DistToString();
             PyEval_RestoreThread(m_thread_state);
             m_thread_state = NULL;
-            return make_tuple(true, cls, dist2dict(distrib), distance);
+            return make_tuple(true, cls, dist2dict(distrib, normalize), distance);
         }
     } else {
         PyEval_RestoreThread(m_thread_state);
@@ -215,15 +215,30 @@ bool TimblApiWrapper::showSettings(object& stream)
 }
 
 
-python::dict TimblApiWrapper::dist2dict(const Timbl::ValueDistribution * distribution, double minf) const {
+python::dict TimblApiWrapper::dist2dict(const Timbl::ValueDistribution * distribution, bool normalize, double minf) const {
     python::dict result;
 
     size_t freq;
 
+    double maxfreq = 0; 
+
+    if (normalize) {
+        Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin();
+        while ( it != distribution->end() ){
+            Timbl::Vfield *f = it->second;
+            if (f->Freq() > maxfreq) maxfreq = f->Freq();
+            ++it;
+        }
+    }
+
     Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin();
     while ( it != distribution->end() ){
         Timbl::Vfield *f = it->second;
-        freq = f->Freq();
+        if (normalize) {
+            freq = f->Freq() / maxfreq;
+        } else {
+            freq = f->Freq();
+        }
         if ( freq >= minf ){
             result[f->Value()->Name()] = freq;
         }

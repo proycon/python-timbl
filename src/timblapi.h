@@ -62,7 +62,7 @@ class TimblApiWrapper : public Timbl::TimblAPI {
 private:
     std::map<pthread_t,Timbl::TimblExperiment *> experimentpool;
     Timbl::TimblExperiment * detachedexp;
-    python::dict dist2dict(const Timbl::ValueDistribution * dist, double=0) const;
+    python::dict dist2dict(const Timbl::ValueDistribution * dist,  bool=true,double=0) const;
 public:
 	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; }
     ~TimblApiWrapper() { 
@@ -76,8 +76,8 @@ public:
 
 	python::tuple classify(const std::string& line);
 	python::tuple classify2(const std::string& line);
-	python::tuple classify3(const std::string& line, const unsigned char requireddepth=0);
-	python::tuple classify3safe(const std::string& line, const unsigned char requireddepth=0);
+	python::tuple classify3(const std::string& line, bool normalize=true,const unsigned char requireddepth=0);
+	python::tuple classify3safe(const std::string& line, bool normalize=true,const unsigned char requireddepth=0);
 
 	std::string bestNeighbours();
 	bool showBestNeighbours(python::object& stream);

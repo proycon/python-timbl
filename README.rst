@@ -81,6 +81,7 @@ After importing the necessary module, the classifier is instantiated by passing 
 	import timbl
 	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )
 
+Normalization of theclass distribution is enabled by default (regardless of the ``-G`` option to Timbl), pass ``normalize=False`` to disable it.
 
 Training instances can be added using the ``append(featurevector, classlabel)`` method::
 
@@ -161,10 +162,10 @@ Method overloading TiMBL's ``Classify`` methods use the C++ method overloading f
 	#                         std::string& Distrib,
 	#                         double& distance);
 	#
-	def TimblAPI.classify3(line, requireddepth=0) -> bool, string, dictionary, distance
+	def TimblAPI.classify3(line, bool normalize=true,int requireddepth=0) -> bool, string, dictionary, distance
 
     #Thread-safe version of the above, releases and reacquires Python's Global Interprer Lock
-	def TimblAPI.classify3safe(line, requireddepth=0) -> bool, string, dictionary, distance
+	def TimblAPI.classify3safe(line, normalize, requireddepth=0) -> bool, string, dictionary, distance
 
 
 Note that the ``classify3`` function returned a string representation of the

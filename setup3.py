@@ -99,6 +99,11 @@ class BuildExt(build_ext):
             elif os.path.exists(self.boost_library_dir + "/libboost_python.so"):
                 #probably goes wrong if this is for python 2!
                 boostlib = "boost_python"
+            elif os.path.exists(self.boost_library_dir + "/libboost_python3.dylib"): #Mac OS X
+                boostlib = "boost_python3" 
+            elif os.path.exists(self.boost_library_dir + "/libboost_python.dylib"): #Mac OS X
+                #probably goes wrong if this is for python 2!
+                boostlib = "boost_python"
             else:
                 print("Unable to find boost library",file=sys.stderr)
                 sys.exit(65)

@@ -157,11 +157,11 @@ std::string TimblApiWrapper::bestNeighbours()
 
 bool TimblApiWrapper::showBestNeighbours(object& stream)
 {
-	int fd = extract<int>(stream.attr("fileno")());
     #ifdef __clang__
     std::cerr << "showBestNeighbours is not implemented for clang" << std::endl;
     return false; 
 	#else
+	int fd = extract<int>(stream.attr("fileno")());
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
 	std::ostream out(&fdbuf);
 	return ShowBestNeighbors(out);
@@ -179,11 +179,11 @@ std::string TimblApiWrapper::options()
 
 bool TimblApiWrapper::showOptions(object& stream)
 {
-	int fd = extract<int>(stream.attr("fileno")());
     #ifdef __clang__
     std::cerr << "showOptions is not implemented for clang" << std::endl;
     return false; 
 	#else
+	int fd = extract<int>(stream.attr("fileno")());
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
 	std::ostream out(&fdbuf);
 	return ShowOptions(out);
@@ -206,15 +206,15 @@ void TimblApiWrapper::initthreading() {
 	
 bool TimblApiWrapper::showSettings(object& stream)
 {
-	int fd = extract<int>(stream.attr("fileno")());
     #ifdef __clang__
     std::cerr << "showSettings is not implemented for clang" << std::endl;
     return false; 
 	#else
+	int fd = extract<int>(stream.attr("fileno")());
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
-	#endif
 	std::ostream out(&fdbuf);
 	return ShowSettings(out);
+	#endif
 }
 
 

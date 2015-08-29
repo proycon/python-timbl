@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Sander Canisius
+ * Copyright (C) 2006-2015 Sander Canisius, Maarten van Gompel
  *
  * This file is part of python-timbl.
  * 
@@ -55,7 +55,9 @@
 #include <sstream>
 #include <string>
 
+#ifndef __clang__
 #include <ext/stdio_filebuf.h>
+#endif
 
 #include <boost/utility.hpp>
 #include <boost/python.hpp>
@@ -156,13 +158,14 @@ std::string TimblApiWrapper::bestNeighbours()
 bool TimblApiWrapper::showBestNeighbours(object& stream)
 {
 	int fd = extract<int>(stream.attr("fileno")());
-	#if __GLIBCXX__ < 20040419
-	__gnu_cxx::stdio_filebuf<char> fdbuf(fd, std::ios::out, false, static_cast< size_t >(BUFSIZ));
+    #ifdef __clang__
+    std::cerr << "showBestNeighbours is not implemented for clang" << std::endl;
+    return false; 
 	#else
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
-	#endif
 	std::ostream out(&fdbuf);
 	return ShowBestNeighbors(out);
+	#endif
 }
 
 
@@ -177,14 +180,14 @@ std::string TimblApiWrapper::options()
 bool TimblApiWrapper::showOptions(object& stream)
 {
 	int fd = extract<int>(stream.attr("fileno")());
-	#if __GLIBCXX__ < 20040419
-	__gnu_cxx::stdio_filebuf<char> fdbuf(fd, std::ios::out, false,
-																			 static_cast< size_t >(BUFSIZ));
+    #ifdef __clang__
+    std::cerr << "showOptions is not implemented for clang" << std::endl;
+    return false; 
 	#else
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
-	#endif
 	std::ostream out(&fdbuf);
 	return ShowOptions(out);
+	#endif
 }
 
 
@@ -204,9 +207,9 @@ void TimblApiWrapper::initthreading() {
 bool TimblApiWrapper::showSettings(object& stream)
 {
 	int fd = extract<int>(stream.attr("fileno")());
-	#if __GLIBCXX__ < 20040419
-	__gnu_cxx::stdio_filebuf<char> fdbuf(fd, std::ios::out, false,
-																			 static_cast< size_t >(BUFSIZ));
+    #ifdef __clang__
+    std::cerr << "showSettings is not implemented for clang" << std::endl;
+    return false; 
 	#else
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
 	#endif

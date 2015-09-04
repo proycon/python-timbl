@@ -63,8 +63,9 @@ private:
     std::map<pthread_t,Timbl::TimblExperiment *> experimentpool;
     Timbl::TimblExperiment * detachedexp;
     python::dict dist2dict(const Timbl::ValueDistribution * dist,  bool=true,double=0) const;
+    bool debug;
 public:
-	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; }
+	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; debug = false;}
     ~TimblApiWrapper() { 
         if (detachedexp != NULL) delete detachedexp; 
         for (std::map<pthread_t,Timbl::TimblExperiment *>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
@@ -75,6 +76,7 @@ public:
     
 
     void initthreading();
+    void enableDebug( debug = true; );
     Timbl::TimblExperiment * getexperimentforthread();
 
 	python::tuple classify(const std::string& line);

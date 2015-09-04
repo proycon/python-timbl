@@ -312,7 +312,6 @@ BOOST_PYTHON_MODULE(timblapi)
 		.def("classify3safe", &TimblApiWrapper::classify3safe, CLASSIFY3SAFE_DOC)
 
 		.def("initthreading", &TimblApiWrapper::initthreading, INITTHREADING_DOC)
-		.def("finishthreading", &TimblApiWrapper::finishthreading, FINISHTHREADING_DOC)
 		.def("enableDebug", &TimblApiWrapper::enableDebug, ENABLEDEBUG_DOC)
 
 		.def("showBestNeighbours", &TimblApiWrapper::showBestNeighbours,

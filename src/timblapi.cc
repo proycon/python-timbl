@@ -113,19 +113,18 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
     if (experimentpool.find(thisthread) != experimentpool.end()) {
         if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
         clonedexp = experimentpool[thisthread];
-        pthread_mutex_unlock(&lock);
-    } else {
+    } else if (detachexp != NULL) {
         if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
-        pthread_mutex_unlock(&lock);
         clonedexp = detachedexp->clone();
         *clonedexp = *detachedexp; //ugly but needed
         if ( detachedexp->getOptParams() ){
             clonedexp->setOptParams( detachedexp->getOptParams()->Clone(0) );
         }
-        pthread_mutex_lock(&lock);
         experimentpool[thisthread] = clonedexp;
-        pthread_mutex_unlock(&lock);
+    } else {
+        std::cerr << "(ERROR: Detachedexp == NULL  !!!!!))" << std::endl;
     }
+    pthread_mutex_unlock(&lock);
 
     const Timbl::ValueDistribution * distrib; 
     double distance;

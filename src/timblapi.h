@@ -69,14 +69,14 @@ public:
     ~TimblApiWrapper() { 
         PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
         pthread_t thisthread = pthread_self();
-        std::cerr << "(Destroying TimblApiWrapper for thread " << (size_t) thisthread << ")" << std::endl;
+        //std::cerr << "(Destroying TimblApiWrapper for thread " << (size_t) thisthread << ")" << std::endl;
         pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; //global lock
         pthread_mutex_lock(&lock);
         std::map<pthread_t,Timbl::TimblExperiment *>::iterator iter = experimentpool.find(thisthread);
         if (experimentpool.find(thisthread) != experimentpool.end()) {
             delete iter->second;
             experimentpool.erase(iter);
-            std::cerr << "(Freed TimblExperiment for thread " << (size_t) thisthread << ")" << std::endl;
+            //std::cerr << "(Freed TimblExperiment for thread " << (size_t) thisthread << ")" << std::endl;
         }
         pthread_mutex_unlock(&lock);
         PyEval_RestoreThread(m_thread_state); //reacquire GIL

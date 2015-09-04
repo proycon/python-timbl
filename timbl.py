@@ -59,7 +59,7 @@ def u(s, encoding = 'utf-8', errors='strict'):
 
 
 class TimblClassifier(object):
-    def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000, threading=False, normalize=True):
+    def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000, threading=False, normalize=True, debug=False):
         if format.lower() == "tabbed":
             self.format = "Tabbed"
             self.delimiter = "\t"
@@ -79,6 +79,7 @@ class TimblClassifier(object):
         self.flushthreshold = flushthreshold
         self.instances = []
         self.api = None
+        self.debug = debug
 
         if os.path.exists(self.fileprefix + ".train") and overwrite:
             self.flushed = 0
@@ -113,6 +114,7 @@ class TimblClassifier(object):
             self.flush()
 
     def flush(self):
+        if self.debug: print("Flushing...",file=sys.stderr)
         if len(self.instances) == 0: return False
 
         if self.flushed:
@@ -131,6 +133,7 @@ class TimblClassifier(object):
     def __delete__(self):
         self.flush()
         if self.threading:
+            if self.debug: print("Invoking finishtreading()",file=sys.stderr)
             self.api.finishthreading()
 
     def train(self, save=False):
@@ -207,6 +210,7 @@ class TimblClassifier(object):
         #if os.path.exists(self.fileprefix + ".wgt"):
         #    self.api.getWeights(self.fileprefix + '.wgt')
         if self.threading:
+            if self.debug: print("Invoking initthreading()",file=sys.stderr)
             self.api.initthreading()
 
     def addinstance(self, testfile, features, classlabel="?"):

@@ -114,7 +114,7 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
         if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
         clonedexp = experimentpool[thisthread];
     } else if (detachedexp != NULL) {
-        if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
+        if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ", clonedexp=" << (size_t) clonedexp << ", experimentpool=" << (size_t) &experimentpool << ")" << std::endl;
         clonedexp = detachedexp->clone();
         *clonedexp = *detachedexp; //ugly but needed
         if ( detachedexp->getOptParams() ){

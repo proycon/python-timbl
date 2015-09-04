@@ -318,6 +318,7 @@ BOOST_PYTHON_MODULE(timblapi)
 
 		.def("initthreading", &TimblApiWrapper::initthreading, INITTHREADING_DOC)
 		.def("finishthreading", &TimblApiWrapper::finishthreading, FINISHTHREADING_DOC)
+		.def("enableDebug", &TimblApiWrapper::enableDebug, ENABLEDEBUG_DOC)
 
 		.def("showBestNeighbours", &TimblApiWrapper::showBestNeighbours,
 				 SHOWBESTNEIGHBOURS_DOC)

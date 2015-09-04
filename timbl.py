@@ -148,6 +148,10 @@ class TimblClassifier(object):
             self.api = timblapi.TimblAPI(b(options), b"")
         else:
             self.api = timblapi.TimblAPI(options,"")
+        if self.debug:
+            print("Enabling debug for timblapi",file=stderr)
+            self.api.enableDebug()
+
         trainfile = self.fileprefix + ".train"
         self.api.learn(b(trainfile))
         if save:
@@ -205,6 +209,9 @@ class TimblClassifier(object):
             self.api = timblapi.TimblAPI(b(options), b"")
         else:
             self.api = timblapi.TimblAPI(options, "")
+        if self.debug:
+            print("Enabling debug for timblapi",file=stderr)
+            self.api.enableDebug()
         print("Calling Timbl API : " + options,file=stderr)
         self.api.getInstanceBase(b(self.fileprefix + '.ibase'))
         #if os.path.exists(self.fileprefix + ".wgt"):
@@ -245,6 +252,9 @@ class TimblClassifier(object):
             self.api = timblapi.TimblAPI(b(options), b"")
         else:
             self.api = timblapi.TimblAPI(options, "")
+        if self.debug:
+            print("Enabling debug for timblapi",file=stderr)
+            self.api.enableDebug()
         print("Calling Timbl Test : " + options,file=stderr)
         if sys.version < '3':
             self.api.test(b(foldsfile),b'',b'')
@@ -264,6 +274,9 @@ class TimblClassifier(object):
             self.api = timblapi.TimblAPI(b(options), b"")
         else:
             self.api = timblapi.TimblAPI(options, "")
+        if self.debug:
+            print("Enabling debug for timblapi",file=stderr)
+            self.api.enableDebug()
         print("Calling Timbl API : " + options,file=stderr)
         if sys.version < '3':
             self.api.learn(b(traintestfile))

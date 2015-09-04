@@ -516,6 +516,11 @@ Return the output of the showOptions method as a string.
 :rtype: str
 """
 
+ENABLEDEBUG_DOC = """
+self.enableDebug()
+
+Enable debug
+"""
 
 SETTINGS_DOC = """
 self.settings()

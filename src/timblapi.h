@@ -76,7 +76,7 @@ public:
     
 
     void initthreading();
-    void enableDebug( debug = true; );
+    void enableDebug() { debug = true; };
     Timbl::TimblExperiment * getexperimentforthread();
 
 	python::tuple classify(const std::string& line);

@@ -66,13 +66,19 @@ private:
 public:
 	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; }
     ~TimblApiWrapper() { 
-        if (detachedexp != NULL) delete detachedexp; 
-        for (std::map<pthread_t,Timbl::TimblExperiment *>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
+        pthread_t thisthread = pthread_self();
+        pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; //global lock
+        pthread_mutex_lock(&lock);
+        std::map<pthread_t,Timbl::TimblExperiment *>::iterator iter = experimentpool.find(thisthread);
+        if (experimentpool.find(thisthread) != experimentpool.end()) {
             delete iter->second;
+            experimentpool.erase(iter);
         }
+        pthread_mutex_unlock(&lock);
     }
 
     void initthreading();
+    void finishthreading();
 
 	python::tuple classify(const std::string& line);
 	python::tuple classify2(const std::string& line);

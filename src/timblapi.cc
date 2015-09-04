@@ -200,6 +200,13 @@ void TimblApiWrapper::initthreading() {
     initExperiment();
     detachedexp = grabAndDisconnectExp();
 }
+
+void TimblApiWrapper::finishthreading() {
+    if (detachedexp != NULL) {
+        delete detachedexp;
+        detachedexp = NULL;
+    }
+}
 	
 bool TimblApiWrapper::showSettings(object& stream)
 {
@@ -305,6 +312,7 @@ BOOST_PYTHON_MODULE(timblapi)
 		.def("classify3safe", &TimblApiWrapper::classify3safe, CLASSIFY3SAFE_DOC)
 
 		.def("initthreading", &TimblApiWrapper::initthreading, INITTHREADING_DOC)
+		.def("finishthreading", &TimblApiWrapper::finishthreading, FINISHTHREADING_DOC)
 
 		.def("showBestNeighbours", &TimblApiWrapper::showBestNeighbours,
 				 SHOWBESTNEIGHBOURS_DOC)

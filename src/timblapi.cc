@@ -100,20 +100,16 @@ tuple TimblApiWrapper::classify3(const std::string& line, bool normalize, const 
     }
 }
 
-tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,const unsigned char requireddepth)
-{
-    PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
-    
 
-    
-    pthread_t thisthread = pthread_self();
-    Timbl::TimblExperiment * clonedexp;
+Timbl::TimblExperiment * timblApiWrapper::getexperimentforthread() {
     pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; //global lock
     pthread_mutex_lock(&lock);
+    pthread_t thisthread = pthread_self();
+    Timbl::TimblExperiment * clonedexp = NULL;
     if (experimentpool.find(thisthread) != experimentpool.end()) {
         if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
         clonedexp = experimentpool[thisthread];
-    } else if (detachedexp != NULL) {
+    } else {
         if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ", clonedexp=" << (size_t) clonedexp << ", experimentpool=" << (size_t) &experimentpool << ")" << std::endl;
         clonedexp = detachedexp->clone();
         *clonedexp = *detachedexp; //ugly but needed
@@ -121,10 +117,16 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
             clonedexp->setOptParams( detachedexp->getOptParams()->Clone(0) );
         }
         experimentpool[thisthread] = clonedexp;
-    } else {
-        std::cerr << "(ERROR: Detachedexp == NULL  !!!!!))" << std::endl;
     }
     pthread_mutex_unlock(&lock);
+    return clonedexp;
+}
+
+tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,const unsigned char requireddepth)
+{
+    PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
+    
+    Timbl::TimblExperiment * clonedexp = getexperimentforthread();
 
     const Timbl::ValueDistribution * distrib; 
     double distance;
@@ -205,12 +207,6 @@ void TimblApiWrapper::initthreading() {
     detachedexp = grabAndDisconnectExp();
 }
 
-void TimblApiWrapper::finishthreading() {
-    if (detachedexp != NULL) {
-        delete detachedexp;
-        detachedexp = NULL;
-    }
-}
 	
 bool TimblApiWrapper::showSettings(object& stream)
 {

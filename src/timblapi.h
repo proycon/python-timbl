@@ -53,7 +53,6 @@
 #include <boost/python.hpp>
 #include <string>
 #include <map>
-#include <iostream>
 #include <pthread.h>
 
 namespace python = boost::python;
@@ -64,29 +63,19 @@ private:
     std::map<pthread_t,Timbl::TimblExperiment *> experimentpool;
     Timbl::TimblExperiment * detachedexp;
     python::dict dist2dict(const Timbl::ValueDistribution * dist,  bool=true,double=0) const;
-    bool debug;
 public:
-	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; debug = false; }
+	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; }
     ~TimblApiWrapper() { 
-        PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
-        pthread_t thisthread = pthread_self();
-        if (debug) std::cerr << "(Destroying TimblApiWrapper for thread " << (size_t) thisthread << ")" << std::endl;
-        pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; //global lock
-        pthread_mutex_lock(&lock);
-        std::map<pthread_t,Timbl::TimblExperiment *>::iterator iter = experimentpool.find(thisthread);
-        if (experimentpool.find(thisthread) != experimentpool.end()) {
+        if (detachedexp != NULL) delete detachedexp; 
+        for (std::map<pthread_t,Timbl::TimblExperiment *>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
             delete iter->second;
-            experimentpool.erase(iter);
-            if (debug) std::cerr << "(Freed TimblExperiment for thread " << (size_t) thisthread << ")" << std::endl;
         }
-        pthread_mutex_unlock(&lock);
-        PyEval_RestoreThread(m_thread_state); //reacquire GIL
     }
 
-    void initthreading();
-    void finishthreading();
+    
 
-    void enableDebug() { debug = true; }
+    void initthreading();
+    Timbl::TimblExperiment * getexperimentforthread();
 
 	python::tuple classify(const std::string& line);
 	python::tuple classify2(const std::string& line);

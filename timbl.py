@@ -132,9 +132,6 @@ class TimblClassifier(object):
 
     def __delete__(self):
         self.flush()
-        if self.threading:
-            if self.debug: print("Invoking finishtreading()",file=sys.stderr)
-            self.api.finishthreading()
 
     def train(self, save=False):
         self.flush()

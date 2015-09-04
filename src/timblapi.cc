@@ -111,9 +111,11 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
     pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; //global lock
     pthread_mutex_lock(&lock);
     if (experimentpool.find(thisthread) != experimentpool.end()) {
+        if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
         clonedexp = experimentpool[thisthread];
         pthread_mutex_unlock(&lock);
     } else {
+        if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
         pthread_mutex_unlock(&lock);
         clonedexp = detachedexp->clone();
         *clonedexp = *detachedexp; //ugly but needed

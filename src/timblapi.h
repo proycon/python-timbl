@@ -65,10 +65,11 @@ private:
     std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> > experimentpool;
     Timbl::TimblExperiment * detachedexp;
     python::dict dist2dict(const Timbl::ValueDistribution * dist,  bool=true,double=0) const;
+    pthread_mutex_t lock; //global lock
     bool debug;
     int runningthreads;
 public:
-	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; debug = false; runningthreads = 0;}
+	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; debug = false; runningthreads = 0; lock = PTHREAD_MUTEX_INITIALIZER;}
     ~TimblApiWrapper() { 
         if (debug) std::cerr << "TimblApiWrapper Destructor" << std::endl;
         if (runningthreads == 0) {

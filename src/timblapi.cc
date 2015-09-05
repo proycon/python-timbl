@@ -102,7 +102,6 @@ tuple TimblApiWrapper::classify3(const std::string& line, bool normalize, const 
 
 
 Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
-    pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; //global lock
     pthread_mutex_lock(&lock);
     pthread_t thisthread = pthread_self();
     Timbl::TimblExperiment * clonedexp = NULL;

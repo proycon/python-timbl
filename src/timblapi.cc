@@ -106,17 +106,24 @@ Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
     pthread_mutex_lock(&lock);
     pthread_t thisthread = pthread_self();
     Timbl::TimblExperiment * clonedexp = NULL;
-    if (experimentpool.find(thisthread) != experimentpool.end()) {
+    for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *>>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
+        if (iter->first == thistread) {
+            clonedexp = iter->second;
+            break;
+        }
+    }
+    if (clonedexp != NULL) {
         if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
         clonedexp = experimentpool[thisthread];
     } else {
-        if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ", clonedexp=" << (size_t) clonedexp << ", experimentpool=" << (size_t) &experimentpool << ")" << std::endl;
         clonedexp = detachedexp->clone();
+        if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ", clonedexp=" << (size_t) clonedexp << ", experimentpool=" << (size_t) &experimentpool << ")" << std::endl;
         *clonedexp = *detachedexp; //ugly but needed
         if ( detachedexp->getOptParams() ){
             clonedexp->setOptParams( detachedexp->getOptParams()->Clone(0) );
         }
-        experimentpool[thisthread] = clonedexp;
+        experimentpool.push_back(std::pair<pthread_t,Timbl::TimblExperiment*>(thisthread,clonedexp));
+        if (debug) std::cerr << "(Experimentpool size = " << experimentpool.size() << ")" << std::endl;
     }
     pthread_mutex_unlock(&lock);
     return clonedexp;

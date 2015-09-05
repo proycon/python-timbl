@@ -54,7 +54,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <pair>
+#include <utility>
 #include <pthread.h>
 
 namespace python = boost::python;

@@ -106,18 +106,18 @@ Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
     pthread_mutex_lock(&lock);
     pthread_t thisthread = pthread_self();
     Timbl::TimblExperiment * clonedexp = NULL;
-    for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *>>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
+    for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> >::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
         if (iter->first == thistread) {
             clonedexp = iter->second;
             break;
         }
     }
     if (clonedexp != NULL) {
-        if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ")" << std::endl;
+        if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ", runningthreads=" << runningthreads << ")" << std::endl;
         clonedexp = experimentpool[thisthread];
     } else {
         clonedexp = detachedexp->clone();
-        if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ", clonedexp=" << (size_t) clonedexp << ", experimentpool=" << (size_t) &experimentpool << ")" << std::endl;
+        if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ", clonedexp=" << (size_t) clonedexp << ", experimentpool=" << (size_t) &experimentpool << ", runningthreads=" << runningthreads << ")" << std::endl;
         *clonedexp = *detachedexp; //ugly but needed
         if ( detachedexp->getOptParams() ){
             clonedexp->setOptParams( detachedexp->getOptParams()->Clone(0) );
@@ -131,6 +131,7 @@ Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
 
 tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,const unsigned char requireddepth)
 {
+    runningthreads++;
     PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
     
     Timbl::TimblExperiment * clonedexp = getexperimentforthread();
@@ -142,17 +143,20 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
         if ((requireddepth > 0) && (clonedexp->matchDepth() < requireddepth)) {
             PyEval_RestoreThread(m_thread_state);
             m_thread_state = NULL;
+            runningthreads--;
             return make_tuple(true, "", python::dict(), 999999);
         } else {
             const std::string cls = result->Name();
             //const std::string diststring = distrib->DistToString();
             PyEval_RestoreThread(m_thread_state);
             m_thread_state = NULL;
+            runningthreads--;
             return make_tuple(true, cls, dist2dict(distrib, normalize), distance);
         }
     } else {
         PyEval_RestoreThread(m_thread_state);
         m_thread_state = NULL; 
+        runningthreads--;
         return make_tuple(false,"",python::dict(),999999);
     }
 }

@@ -537,8 +537,3 @@ self.initthreading()
 Initialised multi-threading, to be issues *before* doing the threading. Then allows for usage of classify3safe() from with the actual threads. Using the non-thread-safe methods after initthreading will cause segfaults!
 """
 
-FINISHTHREADING_DOC = """
-self.finisthreading()
-
-To be called to do clean-up when all threads are done.
-"""

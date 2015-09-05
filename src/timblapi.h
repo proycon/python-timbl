@@ -62,17 +62,20 @@ namespace python = boost::python;
 
 class TimblApiWrapper : public Timbl::TimblAPI {
 private:
-    std::vector<std::pair<pthread_t,Timbl::TimblExperiment *>> experimentpool;
+    std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> > experimentpool;
     Timbl::TimblExperiment * detachedexp;
     python::dict dist2dict(const Timbl::ValueDistribution * dist,  bool=true,double=0) const;
     bool debug;
+    int runningthreads;
 public:
-	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; debug = false;}
+	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; debug = false; runningthreads = 0;}
     ~TimblApiWrapper() { 
         if (debug) std::cerr << "TimblApiWrapper Destructor" << std::endl;
-        if (detachedexp != NULL) delete detachedexp; 
-        for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *>>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
-            delete iter->second;
+        if (runningthreads == 0) {
+            if (detachedexp != NULL) delete detachedexp; 
+            for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> >::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
+                delete iter->second;
+            }
         }
     }
 

@@ -102,16 +102,18 @@ tuple TimblApiWrapper::classify3(const std::string& line, bool normalize, const 
 
 
 Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
-    pthread_mutex_lock(&lock);
     pthread_t thisthread = pthread_self();
     Timbl::TimblExperiment * clonedexp = NULL;
-    for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> >::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
+    pthread_mutex_lock(&lock);
+    for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> >::const_iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
         if (iter->first == thisthread) {
             if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ", runningthreads=" << runningthreads << ")" << std::endl;
             clonedexp = iter->second;
             break;
         }
     }
+    pthread_mutex_unlock(&lock);
+
     if (clonedexp == NULL) {
         clonedexp = detachedexp->clone();
         if (debug) std::cerr << "(Creating new experiment in pool for thread " << (size_t) thisthread << ", clonedexp=" << (size_t) clonedexp << ", experimentpool=" << (size_t) &experimentpool << ", runningthreads=" << runningthreads << ")" << std::endl;
@@ -122,11 +124,12 @@ Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
         if (clonedexp == NULL) {
             std::cerr << "(FATAL ERROR clonedexp=NULL)" << std::endl;
         } else {
+            pthread_mutex_lock(&lock);
             experimentpool.push_back(std::pair<pthread_t,Timbl::TimblExperiment*>(thisthread,clonedexp));
+            pthread_mutex_unlock(&lock);
         }
         if (debug) std::cerr << "(Experimentpool size = " << experimentpool.size() << ")" << std::endl;
     }
-    pthread_mutex_unlock(&lock);
     return clonedexp;
 }
 

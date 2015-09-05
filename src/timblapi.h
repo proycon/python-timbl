@@ -51,8 +51,10 @@
 #include <timbl/TimblAPI.h>
 
 #include <boost/python.hpp>
+#include <iostream>
 #include <string>
-#include <map>
+#include <vector>
+#include <pair>
 #include <pthread.h>
 
 namespace python = boost::python;
@@ -60,15 +62,16 @@ namespace python = boost::python;
 
 class TimblApiWrapper : public Timbl::TimblAPI {
 private:
-    std::map<pthread_t,Timbl::TimblExperiment *> experimentpool;
+    std::vector<std::pair<pthread_t,Timbl::TimblExperiment *>> experimentpool;
     Timbl::TimblExperiment * detachedexp;
     python::dict dist2dict(const Timbl::ValueDistribution * dist,  bool=true,double=0) const;
     bool debug;
 public:
 	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; debug = false;}
     ~TimblApiWrapper() { 
+        if (debug) std::cerr << "TimblApiWrapper Destructor" << std::endl;
         if (detachedexp != NULL) delete detachedexp; 
-        for (std::map<pthread_t,Timbl::TimblExperiment *>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
+        for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *>>::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
             delete iter->second;
         }
     }

@@ -122,7 +122,7 @@ Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
         }
         if (clonedexp == NULL) {
             std::cerr << "(FATAL ERROR clonedexp=NULL)" << std::endl;
-        } else
+        } else {
             experimentpool.push_back(std::pair<pthread_t,Timbl::TimblExperiment*>(thisthread,clonedexp));
         }
         if (debug) std::cerr << "(Experimentpool size = " << experimentpool.size() << ")" << std::endl;

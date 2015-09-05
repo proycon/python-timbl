@@ -120,7 +120,11 @@ Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
         if ( detachedexp->getOptParams() ){
             clonedexp->setOptParams( detachedexp->getOptParams()->Clone(0) );
         }
-        experimentpool.push_back(std::pair<pthread_t,Timbl::TimblExperiment*>(thisthread,clonedexp));
+        if (clonedexp == NULL) {
+            std::cerr << "(FATAL ERROR clonedexp=NULL)" << std::endl;
+        } else
+            experimentpool.push_back(std::pair<pthread_t,Timbl::TimblExperiment*>(thisthread,clonedexp));
+        }
         if (debug) std::cerr << "(Experimentpool size = " << experimentpool.size() << ")" << std::endl;
     }
     pthread_mutex_unlock(&lock);

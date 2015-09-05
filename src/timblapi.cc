@@ -107,7 +107,7 @@ Timbl::TimblExperiment * TimblApiWrapper::getexperimentforthread() {
     pthread_t thisthread = pthread_self();
     Timbl::TimblExperiment * clonedexp = NULL;
     for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> >::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
-        if (iter->first == thistread) {
+        if (iter->first == thisthread) {
             if (debug) std::cerr << "(Experiment in pool for thread " << (size_t) thisthread << ", runningthreads=" << runningthreads << ")" << std::endl;
             clonedexp = iter->second;
             break;

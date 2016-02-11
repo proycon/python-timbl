@@ -1,10 +1,13 @@
+.. image:: http://applejack.science.ru.nl/lamabadge.php/python-timbl
+   :target: http://applejack.science.ru.nl/languagemachines/
+
 ======================
  README: python-timbl
 ======================
 
 :Authors: Sander Canisius, Maarten van Gompel
 :Contact: proycon@anaproy.nl
-:Web site: http://github.com/proycon/python-timbl/
+:Web site: https://github.com/proycon/python-timbl/
 
 python-timbl is a Python extension module wrapping the full TiMBL C++
 programming interface. With this module, all functionality exposed
@@ -27,7 +30,7 @@ Installation
 ============
 
 python-timbl is distributed as part of **LaMachine**
-(https://github.com/proycon/lamachine), which significantly simplifies
+(https://proycon.github.io/LaMachine), which significantly simplifies
 compilation and installation. The remainder of the instructions in this section
 refer to manual compilation and installation.
 

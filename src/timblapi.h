@@ -69,7 +69,12 @@ private:
     bool debug;
     int runningthreads;
 public:
-	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { detachedexp = NULL; debug = false; runningthreads = 0; lock = PTHREAD_MUTEX_INITIALIZER;}
+	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { 
+        detachedexp = NULL;
+        debug = false;
+        runningthreads = 0;
+        pthread_mutex_init(&lock, NULL);
+    }
     ~TimblApiWrapper() { 
         if (debug) std::cerr << "TimblApiWrapper Destructor" << std::endl;
         if (runningthreads == 0) {

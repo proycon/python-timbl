@@ -69,7 +69,7 @@ tuple TimblApiWrapper::classify(const std::string& line)
 { 
 	std::string cls;
 	bool result = Classify(line, cls);
-	return make_tuple(result, cls);
+	return boost::python::make_tuple(result, cls);
 }
 
 
@@ -78,7 +78,7 @@ tuple TimblApiWrapper::classify2(const std::string& line)
 	std::string cls;
 	double distance;
 	bool result = Classify(line, cls, distance);
-	return make_tuple(result, cls, distance);
+	return boost::python::make_tuple(result, cls, distance);
 }
 
 
@@ -90,13 +90,13 @@ tuple TimblApiWrapper::classify3(const std::string& line, bool normalize, const 
     const Timbl::TargetValue * result  = Classify(line, distrib , distance);
     if (result != NULL) {
         if ((requireddepth > 0) && (matchDepth() < requireddepth)) {
-            return make_tuple(true, "", python::dict(), 999999);
+            return boost::python::make_tuple(true, "", python::dict(), 999999);
         } else {
             const std::string cls = result->Name();
-            return make_tuple(true, cls, dist2dict(distrib, normalize), distance);
+            return boost::python::make_tuple(true, cls, dist2dict(distrib, normalize), distance);
         }
     } else {
-        return make_tuple(false,"",python::dict(),999999);
+        return boost::python::make_tuple(false,"",python::dict(),999999);
     }
 }
 
@@ -148,20 +148,20 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
             PyEval_RestoreThread(m_thread_state);
             m_thread_state = NULL;
             runningthreads--;
-            return make_tuple(true, "", python::dict(), 999999);
+            return boost::python::make_tuple(true, "", python::dict(), 999999);
         } else {
             const std::string cls = result->Name();
             //const std::string diststring = distrib->DistToString();
             PyEval_RestoreThread(m_thread_state);
             m_thread_state = NULL;
             runningthreads--;
-            return make_tuple(true, cls, dist2dict(distrib, normalize), distance);
+            return boost::python::make_tuple(true, cls, dist2dict(distrib, normalize), distance);
         }
     } else {
         PyEval_RestoreThread(m_thread_state);
         m_thread_state = NULL; 
         runningthreads--;
-        return make_tuple(false,"",python::dict(),999999);
+        return boost::python::make_tuple(false,"",python::dict(),999999);
     }
 }
 

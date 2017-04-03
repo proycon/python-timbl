@@ -287,8 +287,8 @@ of the nearest neighbour for a given test instance.
       must match, zero (the default) corresponds to a top level distribution,
       higher values will result in no distribution being returned if the
       required depth is not reached, this improves performance.
-  
- 
+
+
 
 :return: (boolean signalling success or failure, the predicted class,
           class distribution, distance of the nearest neighbour)
@@ -463,21 +463,6 @@ implementation
 """
 
 
-STARTSERVER_DOC = """
-self.startServer(port, maxConnections)
-
-Start a TiMBL server.
-
-:Parameters:
-  `port` : int
-      the TCP port on which to listen for connections
-
-  `maxConnections` : int
-      the maximum number of simultaneous connections
-
-:return: boolean signalling success or failure
-:rtype: bool
-"""
 
 
 CURRENTWEIGHTING_DOC = """

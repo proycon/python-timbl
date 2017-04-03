@@ -2,27 +2,27 @@
  * Copyright (C) 2006 Sander Canisius
  *
  * This file is part of python-timbl.
- * 
+ *
  * python-timbl is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * python-timbl is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with python-timbl; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * Linking python-timbl statically or dynamically with other modules
  * is making a combined work based on python-timbl. Thus, the terms
  * and conditions of the GNU General Public License cover the whole
  * combination.
- * 
+ *
  * In addition, as a special exception, the copyright holder of
  * python-timbl gives you permission to combine python-timbl with free
  * software programs or libraries that are released under the GNU LGPL
@@ -33,7 +33,7 @@
  * code concerned, provided that you include the source code of that
  * other code when and as the GNU GPL requires distribution of source
  * code.
- * 
+ *
  * Note that people who make modified versions of python-timbl are not
  * obligated to grant this special exception for their modified
  * versions; it is their choice whether to do so. The GNU General
@@ -69,23 +69,23 @@ private:
     bool debug;
     int runningthreads;
 public:
-	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) { 
+	TimblApiWrapper(const std::string& args, const std::string& name="") : Timbl::TimblAPI(args, name) {
         detachedexp = NULL;
         debug = false;
         runningthreads = 0;
         pthread_mutex_init(&lock, NULL);
     }
-    ~TimblApiWrapper() { 
+    ~TimblApiWrapper() {
         if (debug) std::cerr << "TimblApiWrapper Destructor" << std::endl;
         if (runningthreads == 0) {
-            if (detachedexp != NULL) delete detachedexp; 
+            if (detachedexp != NULL) delete detachedexp;
             for (std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> >::iterator iter = experimentpool.begin(); iter != experimentpool.end(); iter++) {
                 delete iter->second;
             }
         }
     }
 
-    
+
 
     void initthreading();
     void enableDebug() { debug = true; };

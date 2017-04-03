@@ -2,27 +2,27 @@
  * Copyright (C) 2006-2015 Sander Canisius, Maarten van Gompel
  *
  * This file is part of python-timbl.
- * 
+ *
  * python-timbl is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
- * 
+ *
  * python-timbl is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with python-timbl; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA
- * 
+ *
  * Linking python-timbl statically or dynamically with other modules
  * is making a combined work based on python-timbl. Thus, the terms
  * and conditions of the GNU General Public License cover the whole
  * combination.
- * 
+ *
  * In addition, as a special exception, the copyright holder of
  * python-timbl gives you permission to combine python-timbl with free
  * software programs or libraries that are released under the GNU LGPL
@@ -33,7 +33,7 @@
  * code concerned, provided that you include the source code of that
  * other code when and as the GNU GPL requires distribution of source
  * code.
- * 
+ *
  * Note that people who make modified versions of python-timbl are not
  * obligated to grant this special exception for their modified
  * versions; it is their choice whether to do so. The GNU General
@@ -66,7 +66,7 @@ using namespace boost::python;
 
 
 tuple TimblApiWrapper::classify(const std::string& line)
-{ 
+{
 	std::string cls;
 	bool result = Classify(line, cls);
 	return boost::python::make_tuple(result, cls);
@@ -86,7 +86,7 @@ tuple TimblApiWrapper::classify3(const std::string& line, bool normalize, const 
 {
 	std::string cls;
 	double distance;
-    const Timbl::ValueDistribution * distrib; 
+    const Timbl::ValueDistribution * distrib;
     const Timbl::TargetValue * result  = Classify(line, distrib , distance);
     if (result != NULL) {
         if ((requireddepth > 0) && (matchDepth() < requireddepth)) {
@@ -137,10 +137,10 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
 {
     runningthreads++;
     PyThreadState * m_thread_state = PyEval_SaveThread(); //release GIL
-    
+
     Timbl::TimblExperiment * clonedexp = getexperimentforthread();
 
-    const Timbl::ValueDistribution * distrib; 
+    const Timbl::ValueDistribution * distrib;
     double distance;
     const Timbl::TargetValue * result = clonedexp->Classify(line, distrib,distance);
     if (result != NULL) {
@@ -159,7 +159,7 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
         }
     } else {
         PyEval_RestoreThread(m_thread_state);
-        m_thread_state = NULL; 
+        m_thread_state = NULL;
         runningthreads--;
         return boost::python::make_tuple(false,"",python::dict(),999999);
     }
@@ -177,7 +177,7 @@ bool TimblApiWrapper::showBestNeighbours(object& stream)
 {
     #ifdef __clang__
     std::cerr << "showBestNeighbours is not implemented for clang" << std::endl;
-    return false; 
+    return false;
 	#else
 	int fd = extract<int>(stream.attr("fileno")());
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
@@ -199,7 +199,7 @@ bool TimblApiWrapper::showOptions(object& stream)
 {
     #ifdef __clang__
     std::cerr << "showOptions is not implemented for clang" << std::endl;
-    return false; 
+    return false;
 	#else
 	int fd = extract<int>(stream.attr("fileno")());
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
@@ -222,12 +222,12 @@ void TimblApiWrapper::initthreading() {
     detachedexp = grabAndDisconnectExp();
 }
 
-	
+
 bool TimblApiWrapper::showSettings(object& stream)
 {
     #ifdef __clang__
     std::cerr << "showSettings is not implemented for clang" << std::endl;
-    return false; 
+    return false;
 	#else
 	int fd = extract<int>(stream.attr("fileno")());
 	__gnu_cxx::stdio_filebuf<char> fdbuf(dup(fd), std::ios::out);
@@ -242,7 +242,7 @@ python::dict TimblApiWrapper::dist2dict(const Timbl::ValueDistribution * distrib
 
     size_t freq;
 
-    double maxfreq = 0; 
+    double maxfreq = 0;
 
     if (normalize) {
         Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin();
@@ -315,7 +315,7 @@ BOOST_PYTHON_MODULE(timblapi)
 
 		.def("saveWeights", &TimblApiWrapper::SaveWeights, SAVEWEIGHTS_DOC)
 		.def("getWeights", &TimblApiWrapper::GetWeights, GETWEIGHTS_DOC)
-		
+
 		.def("getAccuracy", &TimblApiWrapper::GetAccuracy, GETACCURACY_DOC)
 
 		.def("writeArrays", &TimblApiWrapper::WriteArrays, WRITEARRAYS_DOC)
@@ -346,7 +346,6 @@ BOOST_PYTHON_MODULE(timblapi)
 		.def("expName", &TimblApiWrapper::ExpName, EXPNAME_DOC)
 		.def("versionInfo", &TimblApiWrapper::VersionInfo, VERSIONINFO_DOC)
 		.staticmethod("versionInfo")
-		.def("startServer", &TimblApiWrapper::StartServer, STARTSERVER_DOC)
 		.def("currentWeighting", &TimblApiWrapper::CurrentWeighting,
 				 CURRENTWEIGHTING_DOC)
 		.def("valid", &TimblApiWrapper::Valid)
@@ -382,7 +381,7 @@ BOOST_PYTHON_MODULE(timblapi)
 		.value("X2", Timbl::X2)
 		.value("SV", Timbl::SV)
 	;
-	
+
 	//def("to_string", to_string);
 }
 

@@ -109,6 +109,8 @@ class BuildExt(build_ext):
                     "-Wl,-Bstatic -l" + boostlib + " -Wl,-Bdynamic".split())
             else:
                 ext.libraries.append(boostlib)
+
+            ext.extra_compile_args.extend("-std=c++11")
             if isinstance(self.compiler, UnixCCompiler) and \
                    self.static_boost_python:
                 ext.extra_link_args.extend(
@@ -126,7 +128,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python-timbl",
-    version="2017.04.04",
+    version="2017.11.09",
     description="Python language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

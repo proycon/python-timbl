@@ -54,6 +54,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 
 #ifndef __clang__
 #include <ext/stdio_filebuf.h>

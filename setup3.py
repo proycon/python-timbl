@@ -170,11 +170,14 @@ class BuildExt(build_ext):
             ext.library_dirs.append(self.libxml2_library_dir)
 
 
+            ext.extra_compile_args.extend(["-std=c++11"])
             if isinstance(self.compiler, UnixCCompiler) and self.static_boost_python:
                 ext.extra_link_args.extend(
                     "-Wl,-Bstatic -l" + self.boostlib + " -Wl,-Bdynamic".split())
             else:
                 ext.libraries.append(self.boostlib)
+
+            ext.extra_compile_args.extend("-std=c++11")
 
         build_ext.build_extensions(self)
 

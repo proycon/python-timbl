@@ -179,6 +179,8 @@ class BuildExt(build_ext):
             else:
                 ext.libraries.append(self.boostlib)
 
+            ext.extra_compile_args.extend("-std=c++11")
+
         build_ext.build_extensions(self)
 
 
@@ -190,7 +192,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 setup(
     name="python-timbl",
     version="2018.02.26",
-    description="Python 3 language binding for the Tilburg Memory-Based Learner",
+    description="Python 2 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",
     url="http://github.com/proycon/python-timbl",

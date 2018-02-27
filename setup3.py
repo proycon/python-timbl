@@ -49,7 +49,7 @@ class BuildExt(build_ext):
     def initialize_options(self):
         build_ext.initialize_options(self)
         pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 32
-        libsearch = ['/usr/lib', '/usr/lib/' + platform.machine() + '-' + platform.system.lower() + '-gnu', '/usr/local/lib']
+        libsearch = ['/usr/lib', '/usr/lib/' + platform.machine() + '-' + platform.system().lower() + '-gnu', '/usr/local/lib']
         includesearch = ['/usr/include', '/usr/local/include']
         if 'VIRTUAL_ENV' in os.environ and os.path.exists(os.environ['VIRTUAL_ENV'] + '/lib'):
             libsearch.insert(0, os.environ['VIRTUAL_ENV'] + '/lib')
@@ -82,7 +82,7 @@ class BuildExt(build_ext):
         self.timbl_library_dir = None
         for d in includesearch:
             if os.path.exists(d  + '/timbl'):
-                self.timbl_include_dir = d + '/timbl'
+                self.timbl_include_dir = d
                 self.timbl_library_dir = d.replace('include','lib')
                 break
 
@@ -113,7 +113,7 @@ class BuildExt(build_ext):
                 self.boostlib = "boost_python-py" + pyversion
             elif os.path.exists(d + "/libboost_python3.so"):
                 self.boost_library_dir = d
-                self.boost_library_dir = "boost_python3"
+                self.boostlib  = "boost_python3"
             elif os.path.exists(d + "/libboost_python.so"):
                 #probably goes wrong if this is for python 2!
                 self.boost_library_dir = d
@@ -127,17 +127,17 @@ class BuildExt(build_ext):
                 self.boostlib = "boost_python"
         for d in includesearch:
             if os.path.exists(d + "/boost"):
-                self.boost_include_path = d + "/boost"
+                self.boost_include_dir = d
 
         if self.boost_library_dir is not None:
             print("Detected boost library in " + self.boost_library_dir + " (" + self.boostlib +")",file=sys.stderr)
         else:
             print("Unable to find boost library directory automatically. Is libboost-python3 installed? Set --boost-library-dir?",file=sys.stderr)
             self.boost_library_dir = libsearch[0]
-        if self.boost_include_dir:
-            print("Detected boost headers in " + self.boost_include_dir + " (" + self.boostlib +")",file=sys.stderr)
+        if self.boost_include_dir is not None:
+            print("Detected boost headers in " + self.boost_include_dir ,file=sys.stderr)
         else:
-            print("Unable to find boost headers automatically. Is libboost-python-dev installed? Set --boost-incldue-dir",file=sys.stderr)
+            print("Unable to find boost headers automatically. Is libboost-python-dev installed? Set --boost-include-dir",file=sys.stderr)
             self.boost_include_dir = includesearch[0]
 
     def finalize_options(self):
@@ -177,7 +177,6 @@ class BuildExt(build_ext):
             else:
                 ext.libraries.append(self.boostlib)
 
-            ext.extra_compile_args.extend("-std=c++11")
 
         build_ext.build_extensions(self)
 

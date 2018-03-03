@@ -173,7 +173,10 @@ class BuildExt(build_ext):
             ext.library_dirs.append(self.libxml2_library_dir)
 
 
-            ext.extra_compile_args.extend(["-std=c++11"])
+            compile_args = ["-std=c++11"]
+            if platform.system() == "Darwin":
+                compile_args.append("-stdlib=libc++")
+            ext.extra_compile_args.extend(compile_args)
             if isinstance(self.compiler, UnixCCompiler) and self.static_boost_python:
                 ext.extra_link_args.extend(
                     "-Wl,-Bstatic -l" + self.boostlib + " -Wl,-Bdynamic".split())
@@ -191,7 +194,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python-timbl",
-    version="2018.02.27",
+    version="2018.03.03",
     description="Python 2 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

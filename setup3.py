@@ -97,7 +97,6 @@ class BuildExt(build_ext):
         self.boostlib = "boost_python"
         if os.path.exists('/usr/local/opt/boost-python3'):
             #Mac OS X with homebrew
-            self.boostlib = "boost_python3"
             libsearch.insert(0,'/usr/local/opt/boost-python3/lib')
             libsearch.insert(0,'/usr/local/opt/boost/lib')
             includesearch.insert(0,'/usr/local/opt/boost/include')
@@ -115,6 +114,10 @@ class BuildExt(build_ext):
                 #probably goes wrong if this is for python 2!
                 self.boost_library_dir = d
                 self.boostlib = "boost_python"
+                break
+            elif os.path.exists(d + "/libboost_python" + pyversion + ".dylib"): #Mac OS X
+                self.boost_library_dir = d
+                self.boostlib = "boost_python" + pyversion
                 break
             elif os.path.exists(d + "/libboost_python3.dylib"): #Mac OS X
                 self.boost_library_dir = d
@@ -191,7 +194,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python3-timbl",
-    version="2018.03.07",
+    version="2018.04.23",
     description="Python 3 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

@@ -118,6 +118,10 @@ class BuildExt(build_ext):
                 self.boost_library_dir = d
                 self.boostlib = "boost_python"
                 break
+            elif os.path.exists(d + "/libboost_python" + pyversion + ".dylib"): #Mac OS X
+                self.boost_library_dir = d
+                self.boostlib = "boost_python" + pyversion
+                break
             elif os.path.exists(d + "/libboost_python.dylib"): #Mac OS X
                 self.boost_library_dir = d
                 #probably goes wrong if this is for python 2!
@@ -189,7 +193,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python-timbl",
-    version="2018.03.07",
+    version="2018.04.23",
     description="Python 2 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

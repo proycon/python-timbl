@@ -85,5 +85,3 @@ class skTiMBL(BaseEstimator, ClassifierMixin):
 
         return pred
 
-    def remove_flushfile(self):
-        self.classifier.remove_flush()

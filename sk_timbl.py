@@ -15,7 +15,7 @@ class skTiMBL(BaseEstimator, ClassifierMixin):
         self.debug = debug
 
         self.classifier = TimblClassifier(self.prefix, "-a {} -k {}".format(self.algorithm, self.k),
-                                            debug=True, flushthreshold=20000)
+                                            debug=True, sklearn=True, flushthreshold=20000)
 
     def fit(self, X, y=None):
         X, y = check_X_y(X, y, dtype=np.int64, accept_sparse='csr')
@@ -25,7 +25,7 @@ class skTiMBL(BaseEstimator, ClassifierMixin):
             if self.debug: print('Features are sparse, choosing faster learning')
 
             self.classifier = TimblClassifier(self.prefix, "-a {} -k {} -N {}".format(self.algorithm,self.k, X.shape[1]),
-                                              format='Sparse', debug=True, flushthreshold=20000)
+                                              format='Sparse', debug=True, sklearn=True, flushthreshold=20000)
 
             for i in range(n_rows):
                 sparse = ['({},{})'.format(i+1, c) for i,c in zip(X[i].indices, X[i].data)]

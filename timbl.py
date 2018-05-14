@@ -85,10 +85,12 @@ class TimblClassifier(object):
         self.instances = []
         self.api = None
         self.debug = debug
+	self.sklearn = sklearn
 
         if sklearn:
             import scipy as sp
             self.flushfile = mktemp(prefix=self.fileprefix, dir=flushdir)
+	    self.flushed = 0
         else:
             if os.path.exists(self.fileprefix + ".train") and overwrite:
                 self.flushed = 0
@@ -103,9 +105,9 @@ class TimblClassifier(object):
         for feature in features:
             if isinstance(feature, int) or isinstance(feature, float):
                 validatedfeatures.append( str(feature) )
-            elif self.delimiter in feature and not sklearn:
+            elif self.delimiter in feature and not self.sklearn:
                 raise ValueError("Feature contains delimiter: " + feature)
-            elif sklearn and isinstance(feature, str): #then is sparse added together
+            elif self.sklearn and isinstance(feature, str): #then is sparse added together
                 validatedfeatures.append(feature)
             else:
                 validatedfeatures.append(feature)

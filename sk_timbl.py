@@ -1,5 +1,6 @@
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils import check_X_y, check_array
+from timbl import TimblClassifier
 import scipy as sp
 import numpy as np
 
@@ -13,7 +14,7 @@ class skTiMBL(BaseEstimator, ClassifierMixin):
         self.normalize = normalize
         self.debug = debug
 
-        self.classifier = TimblCl(self.prefix, "-a {} -k {}".format(self.algorithm, self.k),
+        self.classifier = TimblClassifier(self.prefix, "-a {} -k {}".format(self.algorithm, self.k),
                                             debug=True, flushthreshold=20000)
 
     def fit(self, X, y=None):
@@ -23,7 +24,7 @@ class skTiMBL(BaseEstimator, ClassifierMixin):
         if sp.sparse.issparse(X):
             if self.debug: print('Features are sparse, choosing faster learning')
 
-            self.classifier = TimblCl(self.prefix, "-a {} -k {} -N {}".format(self.algorithm,self.k, X.shape[1]),
+            self.classifier = TimblClassifier(self.prefix, "-a {} -k {} -N {}".format(self.algorithm,self.k, X.shape[1]),
                                               format='Sparse', debug=True, flushthreshold=20000)
 
             for i in range(n_rows):

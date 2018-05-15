@@ -1,52 +1,6 @@
-import pandas as pd
-from sklearn.model_selection import GridSearchCV
-from sklearn.pipeline import Pipeline
-from numpy import mean, std
-from pprint import pprint
-
-class EstimatorSelectionHelper:
-    def __init__(self, models, params, pipe, refit=False, memory=None):
-        if not set(models.keys()).issubset(set(params.keys())):
-            missing_params = list(set(models.keys()) - set(params.keys()))
-            raise ValueError("Some estimators are missing parameters: %s" % missing_params)
-        self.models = models
-        self.params = params
-        self.pipe = pipe
-        self.model = None
-        self.refit = refit
-        self.memory = memory
-        self.keys = models.keys()
-        self.grid_searches = {}
-
-    def fill_grid_searches(self, prev_searches):
-        self.grid_searches = prev_searches
-
-    def fit(self, X, y, cv=10, n_jobs=1, verbose=1, scoring=None):
-        for key in self.keys:
-            if not key in self.grid_searches:
-                print("Running GridSearchCV for %s." % key)
-                model = self.models[key]
-                params = self.params[key]
-
-                if self.pipe:
-                    steps = list(x for x in self.pipe)
-                    steps.append((key, model))
-                    self.model = Pipeline(steps, memory=self.memory)
-
-                gs = GridSearchCV(self.model, params, cv=cv,
-                                  n_jobs=n_jobs if not key in ['KNN', 'TIMBL'] else 2,
-                                  verbose=verbose, scoring=scoring, refit=self.refit)
-                gs.fit(X,y)
-                self.grid_searches[key] = gs
-
-def join_params(param1, param2):
-    temp = param1.copy()
-    temp.update(param2)
-    return temp
-
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.utils import check_X_y, check_array
-from dev_timbl import TimblClassifier
+from timbl import TimblClassifier
 import scipy as sp
 import numpy as np
 
@@ -74,6 +28,8 @@ class skTiMBL(BaseEstimator, ClassifierMixin):
         -N max number of features
         -H turn hashing on/off
 
+        This function still has to be made, for now the appropriate arguments
+        can be passed in fit()
         """
         pass
 

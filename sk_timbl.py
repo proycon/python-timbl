@@ -5,7 +5,7 @@ import scipy as sp
 import numpy as np
 
 class skTiMBL(BaseEstimator, ClassifierMixin):
-    def __init__(self, prefix='timbl', algorithm=0, dist_metric=None,
+    def __init__(self, prefix='timbl', algorithm=4, dist_metric=None,
                  k=1,  normalize=False, debug=0, flushdir=None):
         self.prefix = prefix
         self.algorithm = algorithm

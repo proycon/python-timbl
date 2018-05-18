@@ -108,7 +108,7 @@ class skTiMBL(BaseEstimator, ClassifierMixin):
         instead of a probabilistic continuum such as classifiers that can give
         a probability estimation (e.g. Linear classifiers). For an explanation,
         see Fawcett (2005).
-        """"
+        """
         return predict(X)
 
 

@@ -85,12 +85,12 @@ class TimblClassifier(object):
         self.instances = []
         self.api = None
         self.debug = debug
-	self.sklearn = sklearn
+        self.sklearn = sklearn
 
         if sklearn:
             import scipy as sp
             self.flushfile = mktemp(prefix=self.fileprefix, dir=flushdir)
-	    self.flushed = 0
+            self.flushed = 0
         else:
             if os.path.exists(self.fileprefix + ".train") and overwrite:
                 self.flushed = 0

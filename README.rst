@@ -1,6 +1,9 @@
 .. image:: http://applejack.science.ru.nl/lamabadge.php/python-timbl
    :target: http://applejack.science.ru.nl/languagemachines/
 
+.. image:: https://zenodo.org/badge/8136669.svg
+   :target: https://zenodo.org/badge/latestdoi/8136669
+
 ======================
  README: python-timbl
 ======================
@@ -201,4 +204,4 @@ Three TiMBL API methods print information to a standard C++ output stream object
 
 **scikit-learn wrapper**
 
-A wrapper for use in scikit-learn has been added. It was designed for use in scikit-learn Pipeline objects. The wrapper is not finished and has to date only been tested on sparse data. Note that TiMBL does not work well with large amounts of features. It is suggested to reduce the amount of features to a number below 100 to keep system performance reasonable. Use on servers with large amounts of memory and processing cores advised.   
+A wrapper for use in scikit-learn has been added. It was designed for use in scikit-learn Pipeline objects. The wrapper is not finished and has to date only been tested on sparse data. Note that TiMBL does not work well with large amounts of features. It is suggested to reduce the amount of features to a number below 100 to keep system performance reasonable. Use on servers with large amounts of memory and processing cores advised.

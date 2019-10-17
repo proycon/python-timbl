@@ -1,6 +1,10 @@
 .. image:: http://applejack.science.ru.nl/lamabadge.php/python-timbl
    :target: http://applejack.science.ru.nl/languagemachines/
 
+.. image:: https://www.repostatus.org/badges/latest/active.svg
+   :alt: Project Status: Active – The project has reached a stable, usable state and is being actively developed.
+   :target: https://www.repostatus.org/#active
+
 ======================
  README: python-timbl
 ======================
@@ -15,7 +19,7 @@ through the C++ interface is also available to Python scripts. Being
 able to access the API from Python greatly facilitates prototyping
 TiMBL-based applications.
 
-This is the 2013 release by Maarten van Gompel, building on the 2006 release by Sander Canisius. For those used to the old library, there is one backwards-incompatible change, adapt your scripts to use ``import timblapi`` instead of ``import timbl``, as the latter is now a higher-level interface. 
+This is the 2013 release by Maarten van Gompel, building on the 2006 release by Sander Canisius. For those used to the old library, there is one backwards-incompatible change, adapt your scripts to use ``import timblapi`` instead of ``import timbl``, as the latter is now a higher-level interface.
 
 License
 =======
@@ -42,7 +46,7 @@ timbl in their distribution's package repository. In the remainder of this
 section, it is assumed that ``$TIMBL_HEADERS`` points to the directory that
 contains ``timbl/TimblAPI.h``, and ``$TIMBL_LIBS`` the directory that has
 contains the Timbl libraries. Note that Timbl itself depends on additional
-dependencies. 
+dependencies.
 
 The second prerequisite is Boost.Python, a library that facilitates writing
 Python extension modules in C++. Many Linux distributions come with prebuilt
@@ -76,11 +80,11 @@ and can then be built and installed with the following command, use
                          --timbl-include-dir=$TIMBL_HEADERS  \
                          --timbl-library-dir=$TIMBL_LIBS \
                install --prefix=/dir/to/install/in
-               
+
 This is the verbose variant, if default locations are used then the following may suffice already::
 
-        $ sudo python setup3.py install               
-               
+        $ sudo python setup3.py install
+
 
 The ``--prefix`` option to the install command denotes the directory in which the module is to be installed. If you have the appropriate system permissions, you can leave out this option. The module will then be installed in the Python system tree. Otherwise, make sure that the installation directory is in the module search path of your Python
 system.
@@ -88,7 +92,7 @@ system.
 Usage
 =======
 
-python-timbl offers two interface to the timbl API. A low-level interface contained in the module ``timblapi``, which is very much like the C++ library, and a high-level object oriented interface in the ``timbl`` module, which offers a ``TimblClassifier`` class. 
+python-timbl offers two interface to the timbl API. A low-level interface contained in the module ``timblapi``, which is very much like the C++ library, and a high-level object oriented interface in the ``timbl`` module, which offers a ``TimblClassifier`` class.
 
 timbl.TimblClassifier: High-level interface
 ----------------------------------------------
@@ -107,18 +111,18 @@ Training instances can be added using the ``append(featurevector, classlabel)`` 
 	classifier.append( (1,0,0), 'financial')
 	classifier.append( (0,1,0), 'furniture')
 	classifier.append( (0,0,1), 'geographic')
-	
+
 Subsequently, you invoke the actual training, note that at each step Timbl may output considerable details about what it is doing to standard error output::
 
 	classifier.train()
-	
+
 The results of this training is an instance base file, which you can save to file so you can load it again later::
 
 	classifier.save()
-		
-	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )	
-	classifier.load() 	
-	
+
+	classifier = timbl.TimblClassifier("wsd-bank", "-a 0 -k 1" )
+	classifier.load()
+
 
 
 The main advantage of the Python library is the fact that you can classify instances on the fly as follows, just pass a feature vector and optionally also a class label to ``classify(featurevector, classlabel)``::
@@ -132,7 +136,7 @@ You can also create a test file and test it all at once::
 	classifier.addinstance("testfile", (1,0,0),'financial' ) #addinstance can be used to add instances to external files (use append() for training)
 	classifier.addinstance("testfile", (0,1,0),'furniture' )
 	classifier.addinstance("testfile", (0,0,1),'geograpic' )
-	classifier.addinstance("testfile", (1,1,0),'geograpic' ) #this one will be wrongly classified as financial & furniture 
+	classifier.addinstance("testfile", (1,1,0),'geograpic' ) #this one will be wrongly classified as financial & furniture
 	classifier.test("testfile")
 
 	print "Accuracy: ", classifier.getAccuracy()
@@ -152,7 +156,7 @@ exists for this ``classify`` method.
 If you do not set this option, everything will still work fine, but you won't benefit
 from actual concurrency due to Python's the Global Interpret Lock.
 
-	
+
 timblapi: Low-level interface
 -------------------------------
 

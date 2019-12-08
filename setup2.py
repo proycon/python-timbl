@@ -52,7 +52,7 @@ class BuildExt(build_ext):
     def initialize_options(self):
         build_ext.initialize_options(self)
         pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 32
-        libsearch = ['/usr/lib', '/usr/lib/' + platform.machine() + '-' + platform.system().lower() + '-gnu', '/usr/local/lib']
+        libsearch = ['/usr/lib', '/usr/lib64', '/usr/lib/' + platform.machine() + '-' + platform.system().lower() + '-gnu', '/usr/local/lib', '/usr/local/lib64']
         includesearch = ['/usr/include', '/usr/local/include']
         if 'VIRTUAL_ENV' in os.environ and os.path.exists(os.environ['VIRTUAL_ENV'] + '/lib'):
             libsearch.insert(0, os.environ['VIRTUAL_ENV'] + '/lib')
@@ -193,7 +193,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python-timbl",
-    version="2018.04.23",
+    version="2019.12.09",
     description="Python 2 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

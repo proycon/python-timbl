@@ -21,6 +21,7 @@ else:
     stderr = sys.stderr
     stdout = sys.stdout
 
+from tempfile import mktemp
 import timblapi
 import io
 import os
@@ -59,15 +60,19 @@ def u(s, encoding = 'utf-8', errors='strict'):
 
 
 class TimblClassifier(object):
-    def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000, threading=False, normalize=True, debug=False):
+    def __init__(self, fileprefix, timbloptions, format = "Tabbed", dist=True, encoding = 'utf-8', overwrite = True,  flushthreshold=10000, threading=False, normalize=True, debug=False, sklearn=False, flushdir=None):
         if format.lower() == "tabbed":
             self.format = "Tabbed"
             self.delimiter = "\t"
         elif format.lower() == "columns":
             self.format = "Columns"
             self.delimiter = " "
+        elif format.lower() == 'sparse': # for sparse arrays, e.g. scipy.sparse.csr
+            self.format = "Sparse"
+            self.delimiter = ""
         else:
-            raise ValueError("Only Tabbed and Columns are supported input format for the python wrapper, not " + format)
+            raise ValueError("Only Tabbed, Columns, and Sparse are supported input format for the python wrapper, not " + format)
+
         self.timbloptions = timbloptions
         self.fileprefix = fileprefix
 
@@ -80,11 +85,17 @@ class TimblClassifier(object):
         self.instances = []
         self.api = None
         self.debug = debug
+        self.sklearn = sklearn
 
-        if os.path.exists(self.fileprefix + ".train") and overwrite:
+        if sklearn:
+            import scipy as sp
+            self.flushfile = mktemp(prefix=self.fileprefix, dir=flushdir)
             self.flushed = 0
         else:
-            self.flushed = 1
+            if os.path.exists(self.fileprefix + ".train") and overwrite:
+                self.flushed = 0
+            else:
+                self.flushed = 1
 
         self.threading = threading
 
@@ -94,8 +105,10 @@ class TimblClassifier(object):
         for feature in features:
             if isinstance(feature, int) or isinstance(feature, float):
                 validatedfeatures.append( str(feature) )
-            elif self.delimiter in feature:
+            elif self.delimiter in feature and not self.sklearn:
                 raise ValueError("Feature contains delimiter: " + feature)
+            elif self.sklearn and isinstance(feature, str): #then is sparse added together
+                validatedfeatures.append(feature)
             else:
                 validatedfeatures.append(feature)
         return validatedfeatures
@@ -106,10 +119,10 @@ class TimblClassifier(object):
 
         features = self.validatefeatures(features)
 
-        if self.delimiter in classlabel:
+        if self.delimiter in classlabel and self.delimiter != '':
             raise ValueError("Class label contains delimiter: " + self.delimiter)
 
-        self.instances.append(self.delimiter.join(features) + self.delimiter + classlabel)
+        self.instances.append(self.delimiter.join(features) + (self.delimiter if not self.delimiter == '' else ' ') + classlabel)
         if len(self.instances) >= self.flushthreshold:
             self.flush()
 
@@ -117,10 +130,13 @@ class TimblClassifier(object):
         if self.debug: print("Flushing...",file=sys.stderr)
         if len(self.instances) == 0: return False
 
-        if self.flushed:
-            f = io.open(self.fileprefix + ".train",'a', encoding=self.encoding)
+        if hasattr(self, 'flushfile'):
+            f = io.open(self.flushfile,'w', encoding=self.encoding)
         else:
-            f = io.open(self.fileprefix + ".train",'w', encoding=self.encoding)
+            if self.flushed:
+                f = io.open(self.fileprefix + ".train",'a', encoding=self.encoding)
+            else:
+                f = io.open(self.fileprefix + ".train",'w', encoding=self.encoding)
 
         for instance in self.instances:
             f.write(instance +  "\n")
@@ -135,8 +151,18 @@ class TimblClassifier(object):
 
     def train(self, save=False):
         self.flush()
-        if not os.path.exists(self.fileprefix + ".train"):
-            raise LoadException("Training file '"+self.fileprefix+".train' not found. Did you forget to add instances with append()?")
+
+        if hasattr(self, 'flushfile'):
+            if not os.path.exists(self.flushfile):
+                raise LoadException("Training file '"+self.flushfile+"' not found. Did you forget to add instances with append()?")
+            else:
+                filepath = self.flushfile
+        else:
+            if not os.path.exists(self.fileprefix + ".train"):
+                raise LoadException("Training file '"+self.fileprefix+".train' not found. Did you forget to add instances with append()?")
+            else:
+                filepath = self.fileprefix + '.train'
+
         options = "-F " + self.format + " " +  self.timbloptions
         if self.dist:
             options += " +v+db +v+di"
@@ -149,7 +175,7 @@ class TimblClassifier(object):
             print("Enabling debug for timblapi",file=stderr)
             self.api.enableDebug()
 
-        trainfile = self.fileprefix + ".train"
+        trainfile = filepath
         self.api.learn(b(trainfile))
         if save:
             self.save()
@@ -168,7 +194,8 @@ class TimblClassifier(object):
 
         if not self.api:
             self.load()
-        testinstance = self.delimiter.join(features) + self.delimiter + "?"
+
+        testinstance = self.delimiter.join(features) + (self.delimiter if not self.delimiter == '' else ' ') + "?"
         if self.dist:
             if self.threading:
                 result, cls, distribution, distance = self.api.classify3safe(b(testinstance), self.normalize, int(not allowtopdistribution))
@@ -346,9 +373,4 @@ class TimblClassifier(object):
             print("ERROR: timbl._parsedistribution --  Did not find class distribution for ", instance, file=stderr)
 
         return dist
-
-
-
-
-
 

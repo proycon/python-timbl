@@ -5,6 +5,9 @@
    :alt: Project Status: Active – The project has reached a stable, usable state and is being actively developed.
    :target: https://www.repostatus.org/#active
 
+.. image:: https://zenodo.org/badge/8136669.svg
+   :target: https://zenodo.org/badge/latestdoi/8136669
+
 ======================
  README: python-timbl
 ======================
@@ -203,4 +206,6 @@ manually call the ``initthreading()`` method.
 Three TiMBL API methods print information to a standard C++ output stream object (ShowBestNeighbors, ShowOptions, ShowSettings, ShowSettings). In the Python interface, these methods will only work with Python (stream) objects that have a fileno method returning a valid file descriptor. Alternatively, three new methods are provided (bestNeighbo(u)rs, options, settings); these methods return the same information as a Python string object.
 
 
+**scikit-learn wrapper**
 
+A wrapper for use in scikit-learn has been added. It was designed for use in scikit-learn Pipeline objects. The wrapper is not finished and has to date only been tested on sparse data. Note that TiMBL does not work well with large amounts of features. It is suggested to reduce the amount of features to a number below 100 to keep system performance reasonable. Use on servers with large amounts of memory and processing cores advised.

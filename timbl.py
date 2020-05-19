@@ -13,18 +13,14 @@ from __future__ import division
 from __future__ import absolute_import
 
 import sys
-if sys.version < '3':
-    from codecs import getwriter
-    stderr = getwriter('utf-8')(sys.stderr)
-    stdout = getwriter('utf-8')(sys.stdout)
-else:
-    stderr = sys.stderr
-    stdout = sys.stdout
-
 from tempfile import mktemp
 import timblapi
 import io
 import os
+
+stderr = sys.stderr
+stdout = sys.stdout
+
 
 class LoadException(Exception):
     pass
@@ -32,31 +28,13 @@ class LoadException(Exception):
 class ClassifyException(Exception):
     pass
 
-def b(s):
-    """Conversion to bytes"""
-    if sys.version < '3':
-        if isinstance(s, unicode): #pylint: disable=undefined-variable
-            return s.encode('utf-8')
-    else:
-        return s
-    #else:
-    #    if isinstance(s, str):
-    #        return s.encode('utf-8')
 
 def u(s, encoding = 'utf-8', errors='strict'):
-    #ensure s is properly unicode.. wrapper for python 2.6/2.7,
-    if sys.version < '3':
-        #ensure the object is unicode
-        if isinstance(s, unicode): #pylint: disable=undefined-variable
-            return s
-        else:
-            return unicode(s, encoding,errors=errors) #pylint: disable=undefined-variable
+    #will work on byte arrays
+    if isinstance(s, str):
+        return s
     else:
-        #will work on byte arrays
-        if isinstance(s, str):
-            return s
-        else:
-            return str(s,encoding,errors=errors)
+        return str(s,encoding,errors=errors)
 
 
 class TimblClassifier(object):
@@ -167,16 +145,13 @@ class TimblClassifier(object):
         if self.dist:
             options += " +v+db +v+di"
         print("Calling Timbl API for training: " + options, file=stderr)
-        if sys.version < '3':
-            self.api = timblapi.TimblAPI(b(options), b"")
-        else:
-            self.api = timblapi.TimblAPI(options,"")
+        self.api = timblapi.TimblAPI(options,"")
         if self.debug:
             print("Enabling debug for timblapi",file=stderr)
             self.api.enableDebug()
 
         trainfile = filepath
-        self.api.learn(b(trainfile))
+        self.api.learn(trainfile)
         if save:
             self.save()
         if self.threading:
@@ -185,8 +160,8 @@ class TimblClassifier(object):
     def save(self):
         if not self.api:
             raise Exception("No API instantiated, did you train the classifier first?")
-        self.api.writeInstanceBase(b(self.fileprefix + ".ibase"))
-        self.api.saveWeights(b(self.fileprefix + ".wgt"))
+        self.api.writeInstanceBase(self.fileprefix + ".ibase")
+        self.api.saveWeights(self.fileprefix + ".wgt")
 
     def classify(self, features, allowtopdistribution=True):
 
@@ -198,9 +173,9 @@ class TimblClassifier(object):
         testinstance = self.delimiter.join(features) + (self.delimiter if not self.delimiter == '' else ' ') + "?"
         if self.dist:
             if self.threading:
-                result, cls, distribution, distance = self.api.classify3safe(b(testinstance), self.normalize, int(not allowtopdistribution))
+                result, cls, distribution, distance = self.api.classify3safe(testinstance, self.normalize, int(not allowtopdistribution))
             else:
-                result, cls, distribution, distance = self.api.classify3(b(testinstance), self.normalize, int(not allowtopdistribution))
+                result, cls, distribution, distance = self.api.classify3(testinstance, self.normalize, int(not allowtopdistribution))
             if result:
                 cls = u(cls)
                 return (cls, distribution, distance)
@@ -229,15 +204,12 @@ class TimblClassifier(object):
             raise LoadException("Instance base '"+self.fileprefix+".ibase' not found, did you train and save the classifier first?")
 
         options = "-F " + self.format + " " +  self.timbloptions
-        if sys.version < '3':
-            self.api = timblapi.TimblAPI(b(options), b"")
-        else:
-            self.api = timblapi.TimblAPI(options, "")
+        self.api = timblapi.TimblAPI(options, "")
         if self.debug:
             print("Enabling debug for timblapi",file=stderr)
             self.api.enableDebug()
         print("Calling Timbl API : " + options,file=stderr)
-        self.api.getInstanceBase(b(self.fileprefix + '.ibase'))
+        self.api.getInstanceBase(self.fileprefix + '.ibase')
         #if os.path.exists(self.fileprefix + ".wgt"):
         #    self.api.getWeights(self.fileprefix + '.wgt')
         if self.threading:
@@ -261,10 +233,7 @@ class TimblClassifier(object):
         """Test on an existing testfile and return the accuracy"""
         if not self.api:
             self.load()
-        if sys.version < '3':
-            self.api.test(b(testfile), b(self.fileprefix + '.out'),b'')
-        else:
-            self.api.test(u(testfile), u(self.fileprefix + '.out'),'')
+        self.api.test(u(testfile), u(self.fileprefix + '.out'),'')
         return self.api.getAccuracy()
 
 
@@ -272,18 +241,12 @@ class TimblClassifier(object):
         """Train & Test using cross validation, testfile is a file that contains the filenames of all the folds!"""
         options = "-F " + self.format + " " +  self.timbloptions + " -t cross_validate"
         print("Instantiating Timbl API : " + options,file=stderr)
-        if sys.version < '3':
-            self.api = timblapi.TimblAPI(b(options), b"")
-        else:
-            self.api = timblapi.TimblAPI(options, "")
+        self.api = timblapi.TimblAPI(options, "")
         if self.debug:
             print("Enabling debug for timblapi",file=stderr)
             self.api.enableDebug()
         print("Calling Timbl Test : " + options,file=stderr)
-        if sys.version < '3':
-            self.api.test(b(foldsfile),b'',b'')
-        else:
-            self.api.test(u(foldsfile),'','')
+        self.api.test(u(foldsfile),'','')
         a = self.api.getAccuracy()
         del self.api
         return a
@@ -294,20 +257,13 @@ class TimblClassifier(object):
         """Train & Test using leave one out"""
         traintestfile = self.fileprefix + '.train'
         options = "-F " + self.format + " " +  self.timbloptions + " -t leave_one_out"
-        if sys.version < '3':
-            self.api = timblapi.TimblAPI(b(options), b"")
-        else:
-            self.api = timblapi.TimblAPI(options, "")
+        self.api = timblapi.TimblAPI(options, "")
         if self.debug:
             print("Enabling debug for timblapi",file=stderr)
             self.api.enableDebug()
         print("Calling Timbl API : " + options,file=stderr)
-        if sys.version < '3':
-            self.api.learn(b(traintestfile))
-            self.api.test(b(traintestfile), b(self.fileprefix + '.out'),b'')
-        else:
-            self.api.learn(u(traintestfile))
-            self.api.test(u(traintestfile), u(self.fileprefix + '.out'),'')
+        self.api.learn(u(traintestfile))
+        self.api.test(u(traintestfile), u(self.fileprefix + '.out'),'')
         return self.api.getAccuracy()
 
     def readtestoutput(self):

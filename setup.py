@@ -1,12 +1,10 @@
-#!/usr/bin/python3
+#!/bin/env python3
 
 import sys
 import os
 import shutil
 import platform
 import glob
-if os.path.exists('setup3.py'):
-    shutil.copyfile("setup3.py","setup.py")
 
 from distutils.core import setup, Extension
 from distutils.command.build_ext import build_ext

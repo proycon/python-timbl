@@ -24,6 +24,8 @@ TiMBL-based applications.
 
 This is the 2013 release by Maarten van Gompel, building on the 2006 release by Sander Canisius. For those used to the old library, there is one backwards-incompatible change, adapt your scripts to use ``import timblapi`` instead of ``import timbl``, as the latter is now a higher-level interface.
 
+Since 2020, this only supports Python 3, Python 2 support has been deprecated.
+
 License
 =======
 
@@ -74,10 +76,9 @@ obtained through github::
 	$ git clone git://github.com/proycon/python-timbl.git
 	$ cd python-timbl
 
-and can then be built and installed with the following command, use
-``setup2.py`` for Python 2 and ``setup3.py`` for Python 3::
+and can then be built and installed with the following command::
 
-        $ sudo python setup3.py \
+        $ sudo python3 setup.py \
                build_ext --boost-include-dir=$BOOST_HEADERS \
                          --boost-library-dir=$BOOST_LIBS \
                          --timbl-include-dir=$TIMBL_HEADERS  \

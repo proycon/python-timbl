@@ -1,9 +1,6 @@
 #! /usr/bin/env python
 # -*- coding: utf8 -*-
 
-
-from __future__ import print_function,  unicode_literals, division, absolute_import #Make Python 2.x act as much like Python 3 as possible
-
 import timbl
 import os
 

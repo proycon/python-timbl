@@ -94,7 +94,7 @@ class BuildExt(build_ext):
     def findboost(self, libsearch, includesearch, pyversion):
         self.boost_library_dir = None
         self.boost_include_dir = None
-        self.boostlib = "boost_python3"
+        self.boostlib = "boost_python"
         if os.path.exists('/usr/local/opt/boost-python3'):
             #Mac OS X with homebrew
             libsearch.insert(0,'/usr/local/opt/boost-python3/lib')

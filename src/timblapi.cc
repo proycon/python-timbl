@@ -241,31 +241,21 @@ bool TimblApiWrapper::showSettings(object& stream)
 python::dict TimblApiWrapper::dist2dict(const Timbl::ValueDistribution * distribution, bool normalize, double minf) const {
     python::dict result;
 
-    size_t freq;
-
-    double maxfreq = 0;
-
+    double freq;
+    double sum = 0.0;
     if (normalize) {
-        Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin();
-        while ( it != distribution->end() ){
-            Timbl::Vfield *f = it->second;
-            if (f->Freq() > maxfreq) maxfreq = f->Freq();
-            ++it;
+        for (Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin(); it != distribution->end(); it++) {
+            sum += it->second->Weight();
         }
     }
-
-    Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin();
-    while ( it != distribution->end() ){
-        Timbl::Vfield *f = it->second;
+    for (Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin(); it != distribution->end(); it++) {
         if (normalize) {
-            freq = f->Freq() / maxfreq;
-        } else {
-            freq = f->Freq();
+            it->second->SetWeight(it->second->Weight() / sum);
         }
+        freq = it->second->Weight();
         if ( freq >= minf ){
-            result[f->Value()->Name()] = freq;
+            result[it->second->Value()->Name()] = freq;
         }
-        ++it;
     }
 
     return result;

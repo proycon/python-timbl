@@ -47,7 +47,7 @@ class BuildExt(build_ext):
     def initialize_options(self):
         build_ext.initialize_options(self)
         pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 32
-        libsearch = ['/usr/lib', '/usr/lib64', '/usr/lib/' + platform.machine() + '-' + platform.system().lower() + '-gnu', '/usr/local/lib', '/usr/local/lib64']
+        libsearch = ['/usr/lib', '/usr/lib64', '/usr/lib/' + platform.machine() + '-' + platform.system().lower() + '-gnu', '/usr/lib/x86_64-linux-gnu/', '/usr/local/lib', '/usr/local/lib64']
         includesearch = ['/usr/include', '/usr/local/include']
         if 'VIRTUAL_ENV' in os.environ and os.path.exists(os.environ['VIRTUAL_ENV'] + '/lib'):
             libsearch.insert(0, os.environ['VIRTUAL_ENV'] + '/lib')
@@ -103,6 +103,10 @@ class BuildExt(build_ext):
             if os.path.exists(d + "/libboost_python-py"+pyversion+".so"):
                 self.boost_library_dir = d
                 self.boostlib = "boost_python-py" + pyversion
+                break
+            elif os.path.exists(d + "/libboost_python"+pyversion+".so"):
+                self.boost_library_dir = d
+                self.boostlib = "boost_python" + pyversion
                 break
             elif os.path.exists(d + "/libboost_python3.so"):
                 self.boost_library_dir = d
@@ -192,7 +196,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python3-timbl",
-    version="2020.05.19",
+    version="2020.06.08",
     description="Python 3 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

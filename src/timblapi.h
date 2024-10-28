@@ -64,7 +64,7 @@ class TimblApiWrapper : public Timbl::TimblAPI {
 private:
     std::vector<std::pair<pthread_t,Timbl::TimblExperiment *> > experimentpool;
     Timbl::TimblExperiment * detachedexp;
-    python::dict dist2dict(const Timbl::ValueDistribution * dist,  bool=true,double=0) const;
+    python::dict dist2dict(const Timbl::ClassDistribution * dist,  bool=true,double=0) const;
     pthread_mutex_t lock; //global lock
     bool debug;
     int runningthreads;

@@ -49,6 +49,7 @@
 #include "timbl/Instance.h"
 #include "docstrings.h"
 
+#include <ticcutils/Unicode.h>
 #include <unistd.h>
 
 #include <iostream>
@@ -87,7 +88,7 @@ tuple TimblApiWrapper::classify3(const std::string& line, bool normalize, const 
 {
 	std::string cls;
 	double distance;
-    const Timbl::ValueDistribution * distrib;
+    const Timbl::ClassDistribution * distrib;
     const Timbl::TargetValue * result  = Classify(line, distrib , distance);
     if (result != NULL) {
         if ((requireddepth > 0) && (matchDepth() < requireddepth)) {
@@ -141,9 +142,10 @@ tuple TimblApiWrapper::classify3safe(const std::string& line, bool normalize,con
 
     Timbl::TimblExperiment * clonedexp = getexperimentforthread();
 
-    const Timbl::ValueDistribution * distrib;
+    const Timbl::ClassDistribution * distrib;
     double distance;
-    const Timbl::TargetValue * result = clonedexp->Classify(line, distrib,distance);
+    const auto line_unicode = TiCC::toUnicodeString(line);
+    const Timbl::TargetValue * result = clonedexp->Classify(line_unicode, distrib,distance);
     if (result != NULL) {
         if ((requireddepth > 0) && (clonedexp->matchDepth() < requireddepth)) {
             PyEval_RestoreThread(m_thread_state);
@@ -238,17 +240,17 @@ bool TimblApiWrapper::showSettings(object& stream)
 }
 
 
-python::dict TimblApiWrapper::dist2dict(const Timbl::ValueDistribution * distribution, bool normalize, double minf) const {
+python::dict TimblApiWrapper::dist2dict(const Timbl::ClassDistribution * distribution, bool normalize, double minf) const {
     python::dict result;
 
     double freq;
     double sum = 0.0;
     if (normalize) {
-        for (Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin(); it != distribution->end(); it++) {
+        for (Timbl::ClassDistribution::VDlist::const_iterator it = distribution->begin(); it != distribution->end(); it++) {
             sum += it->second->Weight();
         }
     }
-    for (Timbl::ValueDistribution::VDlist::const_iterator it = distribution->begin(); it != distribution->end(); it++) {
+    for (Timbl::ClassDistribution::VDlist::const_iterator it = distribution->begin(); it != distribution->end(); it++) {
         if (normalize) {
             it->second->SetWeight(it->second->Weight() / sum);
         }

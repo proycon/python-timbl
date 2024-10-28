@@ -46,7 +46,8 @@ class BuildExt(build_ext):
 
     def initialize_options(self):
         build_ext.initialize_options(self)
-        pyversion = sys.version[0:3][0] + sys.version[0:3][2] #returns something like 32
+        pyversion = sys.version.split(" ")[0]
+        pyversion = pyversion.split(".")[0]  + pyversion.split(".")[1] #returns something like 312 for 3.12
         libsearch = ['/usr/lib', '/usr/lib64', '/usr/lib/' + platform.machine() + '-' + platform.system().lower() + '-gnu', '/usr/lib/x86_64-linux-gnu/', '/usr/local/lib', '/usr/local/lib64']
         includesearch = ['/usr/include', '/usr/local/include']
         if 'VIRTUAL_ENV' in os.environ and os.path.exists(os.environ['VIRTUAL_ENV'] + '/lib'):

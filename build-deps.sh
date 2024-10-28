@@ -28,7 +28,6 @@ if [ "$ID" = "almalinux" ] || [ "$ID" = "centos" ] || [ "$ID" = "rhel" ]; then
         export ACLOCAL_PATH=/usr/share/aclocal
     fi
     if [ "$VERSION_ID" = "7" ]; then
-        yum install -y libexttextcat-devel
         if [ -d /opt/rh/devtoolset-10/root/usr/lib ]; then
             #we are running in the manylinux2014 image
             export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib:/opt/rh/devtoolset-10/root/usr/lib
@@ -40,10 +39,6 @@ if [ "$ID" = "almalinux" ] || [ "$ID" = "centos" ] || [ "$ID" = "rhel" ]; then
             cd libxml2-2.9.14 && ./configure --prefix=$PREFIX --without-python && make && make install
             cd ..
         fi
-    elif [ "$VERSION_ID" = "8" ]; then
-        #they forgot to package libexttextcat-devel? grab one manually:
-        wget https://github.com/proycon/LaMachine/raw/master/deps/centos8/libexttextcat-devel-3.4.5-2.el8.x86_64.rpm
-        yum install -y libexttextcat-devel-3.4.5-2.el8.x86_64.rpm
     fi
 fi
 

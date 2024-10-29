@@ -47,7 +47,6 @@ if platform.system() == "Darwin":
         libdirs.append("/opt/homebrew/opt/libxml2/lib")
         includedirs.append("/opt/homebrew/opt/libxml2/include")
         libdirs.append("/opt/homebrew/opt/boost-python3/lib")
-        includedirs.append("/opt/homebrew/opt/boost-python3/include")
         libdirs.append("/opt/homebrew/opt/boost/lib")
         includedirs.append("/opt/homebrew/opt/boost/include")
     else:
@@ -98,12 +97,11 @@ class BuildExt(build_ext):
             libsearch.insert(0,'/usr/local/opt/boost-python3/lib')
             libsearch.insert(0,'/usr/local/opt/boost/lib')
             includesearch.insert(0,'/usr/local/opt/boost/include')
-        if os.path.exists('/opt/homebrew/boost-python3'):
+        if os.path.exists('/opt/homebrew/opt/boost-python3'):
             self.boostlib = "boost_python3"
-            libsearch.insert(0,'/opt/homebrew/boost-python3/lib')
-            libsearch.insert(0,'/opt/homebrew/boost/lib')
-            includesearch.insert(0,'/opt/homebrew/boost-python3/include')
-            includesearch.insert(0,'/opt/homebrew/boost/include')
+            libsearch.insert(0,'/opt/homebrew/opt/boost-python3/lib')
+            libsearch.insert(0,'/opt/homebrew/opt/boost/lib')
+            includesearch.insert(0,'/opt/homebrew/opt/boost/include')
 
         for d in libsearch:
             if os.path.exists(d + "/libboost_python-py"+pyversion+".so"):
@@ -144,12 +142,12 @@ class BuildExt(build_ext):
         if self.boost_library_dir is not None:
             print("Detected boost library in " + self.boost_library_dir + " (" + self.boostlib +")",file=sys.stderr)
         else:
-            print("Unable to find boost library directory automatically. Is libboost-python3 installed? Set --boost-library-dir?",file=sys.stderr)
+            print("Unable to find boost library directory automatically. Is libboost-python3 installed?",file=sys.stderr)
             self.boost_library_dir = libsearch[0]
         if self.boost_include_dir is not None:
             print("Detected boost headers in " + self.boost_include_dir ,file=sys.stderr)
         else:
-            print("Unable to find boost headers automatically. Is libboost-python-dev installed? Set --boost-include-dir",file=sys.stderr)
+            print("Unable to find boost headers automatically. Is libboost-python-dev installed?",file=sys.stderr)
             self.boost_include_dir = includesearch[0]
 
     def build_extensions(self):

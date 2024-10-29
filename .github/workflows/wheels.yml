@@ -18,7 +18,6 @@ jobs:
           - { cp: "cp310",  rel: "3.10" }
           - { cp: "cp311",  rel: "3.11" }
           - { cp: "cp312",  rel: "3.12" }          
-          - { cp: "cp313",  rel: "3.13" }          
 
     steps:
       - uses: actions/checkout@v4.1.1

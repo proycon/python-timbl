@@ -28,67 +28,65 @@ def updateDocHeader(input, output):
 
     stream.close()
 
+includedirs = []
+libdirs = []
+print(f"system={platform.system()} machine={platform.machine()}", file=sys.stderr)
+if platform.system() == "Darwin":
+    #we are running on Mac OS X (with homebrew hopefully), stuff is in specific locations:
+    if platform.machine().lower() == "arm64":
+        print("(macos arm64 detected)", file=sys.stderr)
+        libdirs.append("/opt/homebrew/lib")
+        includedirs.append("/opt/homebrew/include")
+        libdirs.append("/opt/homebrew/icu4c/lib")
+        includedirs.append("/opt/homebrew/icu4c/include")
+        libdirs.append("/opt/homebrew/libxml2/lib")
+        includedirs.append("/opt/homebrew/libxml2/include")
+        includedirs.append("/opt/homebrew/libxml2/include/libxml2")
+        libdirs.append("/opt/homebrew/opt/icu4c/lib")
+        includedirs.append("/opt/homebrew/opt/icu4c/include")
+        libdirs.append("/opt/homebrew/opt/libxml2/lib")
+        includedirs.append("/opt/homebrew/opt/libxml2/include")
+        libdirs.append("/opt/homebrew/opt/boost-python3/lib")
+        includedirs.append("/opt/homebrew/opt/boost-python3/include")
+        libdirs.append("/opt/homebrew/opt/boost/lib")
+        includedirs.append("/opt/homebrew/opt/boost/include")
+    else:
+        #we are running on Mac OS X with homebrew, stuff is in specific locations:
+        libdirs.append("/usr/local/opt/icu4c/lib")
+        includedirs.append("/usr/local/opt/icu4c/include")
+        libdirs.append("/usr/local/opt/libxml2/lib")
+        includedirs.append("/usr/local/opt/libxml2/include")
+        includedirs.append("/usr/local/opt/libxml2/include/libxml2")
+        libdirs.append("/usr/local/opt/boost-python3/lib")
+        includedirs.append("/usr/local/opt/boost-python3/lib")
+        libdirs.append("/usr/local/opt/boost/lib")
+        includedirs.append("/usr/local/opt/boost/include")
+
+#add some common default paths
+includedirs += ['/usr/include/', '/usr/include/libxml2','/usr/local/include/' ]
+libdirs += ['/usr/lib','/usr/local/lib']
+if 'VIRTUAL_ENV' in os.environ:
+    includedirs.insert(0,os.environ['VIRTUAL_ENV'] + '/include')
+    libdirs.insert(0,os.environ['VIRTUAL_ENV'] + '/lib')
+if 'INCLUDE_DIRS' in os.environ:
+    includedirs = list(os.environ['INCLUDE_DIRS'].split(':')) + includedirs
+if 'LIBRARY_DIRS' in os.environ:
+    libdirs = list(os.environ['LIBRARY_DIRS'].split(':')) + libdirs
+
+if platform.system() == "Darwin":
+    extra_options = ["--stdlib=libc++",'-D U_USING_ICU_NAMESPACE=1']
+else:
+    extra_options = ['-D U_USING_ICU_NAMESPACE=1']
+
+print(f"include_dirs={' '.join(includedirs)} library_dirs={' '.join(libdirs)} extra_options={' '.join(extra_options)}", file=sys.stderr)
 
 class BuildExt(build_ext):
-
-    user_options = build_ext.user_options + [
-        ("boost-include-dir=", None, "directory for boost header files"),
-        ("boost-library-dir=", None, "directory for boost library files"),
-        ("timbl-include-dir=", None, "directory for TiMBL files"),
-        ("timbl-library-dir=", None, "directory for TiMBL library files"),
-        ("libxml2-include-dir=", None, "directory for LibXML2 files"),
-        ("libxml2-library-dir=", None, "directory for LibXML2 library files"),
-        ("static-boost-python3", "s", "statically link boost-python")]
-
-    boolean_options = build_ext.boolean_options + [
-        "static-boost-python3"]
-
-
     def initialize_options(self):
         build_ext.initialize_options(self)
         pyversion = sys.version.split(" ")[0]
         pyversion = pyversion.split(".")[0]  + pyversion.split(".")[1] #returns something like 312 for 3.12
-        libsearch = ['/usr/lib', '/usr/lib64', '/usr/lib/' + platform.machine() + '-' + platform.system().lower() + '-gnu', '/usr/lib/x86_64-linux-gnu/', '/usr/local/lib', '/usr/local/lib64']
-        includesearch = ['/usr/include', '/usr/local/include']
-        if 'VIRTUAL_ENV' in os.environ and os.path.exists(os.environ['VIRTUAL_ENV'] + '/lib'):
-            libsearch.insert(0, os.environ['VIRTUAL_ENV'] + '/lib')
-        if 'VIRTUAL_ENV' in os.environ and os.path.exists(os.environ['VIRTUAL_ENV'] + '/include'):
-            includesearch.insert(0, os.environ['VIRTUAL_ENV'] + '/include')
-
         #Find boost
-        self.findboost(libsearch, includesearch, pyversion)
-
-        #Find libxml2
-        if os.path.exists('/usr/local/Cellar/libxml2'):
-            #Mac OS X with homebrew
-            versiondirs = []
-            for d in glob.glob('/usr/local/Cellar/libxml2/*'):
-                if os.path.isdir(d) and d[0] != '.':
-                    versiondirs.append(os.path.basename(d))
-            if versiondirs:
-                versiondirs.sort()
-                version = versiondirs[0]
-                libsearch.insert(0,'/usr/local/Cellar/libxml2/' + version + '/lib')
-                includesearch.insert(0,'/usr/local/Cellar/libxml2/' + version + '/include')
-
-        for d in includesearch:
-            if os.path.exists(d  + '/libxml2'):
-                self.libxml2_include_dir = d + '/libxml2'
-                self.libxml2_library_dir = d.replace('include','lib')
-                break
-
-        #Find timbl
-        self.timbl_library_dir = None
-        for d in includesearch:
-            if os.path.exists(d  + '/timbl'):
-                self.timbl_include_dir = d
-                self.timbl_library_dir = d.replace('include','lib')
-                break
-
-        if self.timbl_library_dir is None:
-            raise Exception("Timbl not found, make sure to install Timbl and set --timbl-include-dir and --timbl-library-dir appropriately...")
-
-        self.static_boost_python = False
+        self.findboost(libdirs, includedirs, pyversion)
 
     def findboost(self, libsearch, includesearch, pyversion):
         self.boost_library_dir = None
@@ -99,6 +97,11 @@ class BuildExt(build_ext):
             libsearch.insert(0,'/usr/local/opt/boost-python3/lib')
             libsearch.insert(0,'/usr/local/opt/boost/lib')
             includesearch.insert(0,'/usr/local/opt/boost/include')
+        if os.path.exists('/opt/homebrew/boost-python3'):
+            libsearch.insert(0,'/opt/homebrew/boost-python3/lib')
+            libsearch.insert(0,'/opt/homebrew/boost/lib')
+            includesearch.insert(0,'/opt/homebrew/boost-python3/include')
+            includesearch.insert(0,'/opt/homebrew/boost/include')
 
         for d in libsearch:
             if os.path.exists(d + "/libboost_python-py"+pyversion+".so"):
@@ -147,45 +150,19 @@ class BuildExt(build_ext):
             print("Unable to find boost headers automatically. Is libboost-python-dev installed? Set --boost-include-dir",file=sys.stderr)
             self.boost_include_dir = includesearch[0]
 
-    def finalize_options(self):
-        build_ext.finalize_options(self)
-        self.ensure_file_exists("boost_include_dir", "boost/python.hpp")
-        self.ensure_dirname("boost_library_dir")
-        self.ensure_file_exists("timbl_include_dir", "timbl/TimblAPI.h")
-        self.ensure_dirname("timbl_library_dir")
-        self.ensure_file_exists("libxml2_include_dir", "libxml/tree.h")
-        self.ensure_dirname("libxml2_library_dir")
-
-    def ensure_file_exists(self, option, filename):
-        self.ensure_dirname(option)
-        self._ensure_tested_string(
-            option,
-            lambda d: os.path.isfile(os.path.join(d, filename)),
-            "directory name",
-            "'%s' was not found in '%%s'" % filename)
-
     def build_extensions(self):
         if newer("src/docstrings.h.in", "src/docstrings.h"):
             updateDocHeader("src/docstrings.h.in", "src/docstrings.h")
 
         for ext in self.extensions:
-            ext.include_dirs.append(self.boost_include_dir)
-            ext.include_dirs.append(self.timbl_include_dir)
-            ext.include_dirs.append(self.libxml2_include_dir)
-            ext.library_dirs.append(self.timbl_library_dir)
-            ext.library_dirs.append(self.boost_library_dir)
-            ext.library_dirs.append(self.libxml2_library_dir)
+            ext.include_dirs += includedirs
+            ext.library_dirs += libdirs
 
             compile_args = ["-std=c++17"]
             if platform.system() == "Darwin":
                 compile_args.append("-stdlib=libc++")
             ext.extra_compile_args.extend(compile_args)
-            if isinstance(self.compiler, UnixCCompiler) and self.static_boost_python:
-                ext.extra_link_args.extend(
-                    "-Wl,-Bstatic -l" + self.boostlib + " -Wl,-Bdynamic".split())
-            else:
-                ext.libraries.append(self.boostlib)
-
+            ext.libraries.append(self.boostlib)
 
         build_ext.build_extensions(self)
 
@@ -193,7 +170,6 @@ class BuildExt(build_ext):
 timblModule = Extension("timblapi", ["src/timblapi.cc"],
                         libraries=["timbl"],
                         depends=["src/timblapi.h", "src/docstrings.h"])
-
 
 setup(
     name="python3-timbl",

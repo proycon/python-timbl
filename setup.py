@@ -175,7 +175,7 @@ timblModule = Extension("timblapi", ["src/timblapi.cc"],
 
 setup(
     name="python3-timbl",
-    version="2024.10.28",
+    version="2024.10.29",
     description="Python 3 language binding for the Tilburg Memory-Based Learner",
     author="Sander Canisius, Maarten van Gompel",
     author_email="S.V.M.Canisius@uvt.nl, proycon@anaproy.nl",

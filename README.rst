@@ -78,20 +78,7 @@ obtained through github::
 
 and can then be built and installed with the following command::
 
-        $ sudo python3 setup.py \
-               build_ext --boost-include-dir=$BOOST_HEADERS \
-                         --boost-library-dir=$BOOST_LIBS \
-                         --timbl-include-dir=$TIMBL_HEADERS  \
-                         --timbl-library-dir=$TIMBL_LIBS \
-               install --prefix=/dir/to/install/in
-
-This is the verbose variant, if default locations are used then the following may suffice already::
-
-        $ sudo python setup3.py install
-
-
-The ``--prefix`` option to the install command denotes the directory in which the module is to be installed. If you have the appropriate system permissions, you can leave out this option. The module will then be installed in the Python system tree. Otherwise, make sure that the installation directory is in the module search path of your Python
-system.
+        $ pip install .
 
 Usage
 =======

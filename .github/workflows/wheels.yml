@@ -41,9 +41,6 @@ jobs:
               elif command -v yum; then
                 yum install -y git libicu-devel libxml2-devel libxslt-devel zlib-devel bzip2-devel libtool autoconf-archive autoconf automake m4 wget boost-devel
                 #on CentOS 7 we also have libtar-devel which will be installed by build-deps.sh, on 8 they are missing and will be installed from source or otherwise
-              elif command -v apk; then
-                apk add build-base git autoconf-archive autoconf automake libtool bzip2-dev icu-dev libxml2-dev libexttextcat-dev libtool rsync boost-dev &&
-                rsync -av --ignore-existing /usr/share/aclocal/*.m4 /usr/local/share/aclocal/
               fi &&
               ./build-deps.sh
            CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2014_x86_64
@@ -56,7 +53,7 @@ jobs:
            CIBW_BUILD: ${{ matrix.python.cp }}-${{ matrix.buildplat.sys }}*
            CIBW_ARCHS_LINUX: "x86_64"
            CIBW_BEFORE_ALL_LINUX: >
-              apk add build-base git autoconf-archive autoconf automake libtool bzip2-dev icu-dev libxml2-dev libexttextcat-dev libtool rsync &&
+              apk add build-base git autoconf-archive autoconf automake libtool bzip2-dev icu-dev libxml2-dev boost-dev boost1.84-python3 libtool rsync &&
               mkdir -p /usr/local/share/aclocal/ && rsync -av --ignore-existing /usr/share/aclocal/*.m4 /usr/local/share/aclocal/ &&
               ./build-deps.sh
            CIBW_MUSLLINUX_X86_64_IMAGE: quay.io/pypa/musllinux_1_1_x86_64

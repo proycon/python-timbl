@@ -64,7 +64,7 @@ jobs:
            CIBW_SKIP: "*-win* *-manylinux_i686 pp*"
 
       - name: Build wheels (macOS)
-        if: ${{ runner.os == 'macOS' }}
+        if: ${{ runner.os == 'macOS' && matrix.python.cp == 'cp312' }}
         run: python -m cibuildwheel --output-dir wheelhouse
         env:
            CIBW_BUILD: ${{ matrix.python.cp }}-${{ matrix.buildplat.sys }}*
@@ -74,9 +74,10 @@ jobs:
               brew install boost boost-python3 &&
               brew tap fbkarsdorp/homebrew-lamachine &&
               brew install timbl &&
-              du -ah /opt/homebrew
+              du -ah /opt/homebrew | grep boost_python
 
       - uses: actions/upload-artifact@v4
+        if: ${{ ! (runner.os == 'macOS' && matrix.python.cp == 'cp312') }}
         with:
           name: ${{matrix.python.cp}}-${{matrix.buildplat.sys}}-${{matrix.buildplat.arch}}
           path: ./wheelhouse/*.whl

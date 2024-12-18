@@ -42,7 +42,7 @@ jobs:
                 #on CentOS 7 we also have libtar-devel which will be installed by build-deps.sh, on 8 they are missing and will be installed from source or otherwise
               fi &&
               ./build-deps.sh
-           CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux2_28_x86_64
+           CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux_2_28_x86_64
            CIBW_SKIP: "*-win* *-manylinux_i686 pp*"
 
       - name: Build wheels (Linux musl)

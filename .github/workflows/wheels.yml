@@ -73,7 +73,8 @@ jobs:
            CIBW_BEFORE_ALL_MACOS: >
               brew install boost boost-python3 &&
               brew tap fbkarsdorp/homebrew-lamachine &&
-              brew install timbl
+              brew install timbl &&
+              du -ah /opt/homebrew
 
       - uses: actions/upload-artifact@v4
         with:

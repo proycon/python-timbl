@@ -102,6 +102,11 @@ class BuildExt(build_ext):
             libsearch.insert(0,'/opt/homebrew/opt/boost-python3/lib')
             libsearch.insert(0,'/opt/homebrew/opt/boost/lib')
             includesearch.insert(0,'/opt/homebrew/opt/boost/include')
+        if os.path.exists('/opt/homebrew/opt/boost-python' + pyversion):
+            self.boostlib = "boost_python" + pyversion
+            libsearch.insert(0,f"/opt/homebrew/opt/boost-python{pyversion}/lib")
+            libsearch.insert(0,'/opt/homebrew/opt/boost/lib')
+            includesearch.insert(0,'/opt/homebrew/opt/boost/include')
 
         for d in libsearch:
             if os.path.exists(d + "/libboost_python-py"+pyversion+".so"):
@@ -120,6 +125,10 @@ class BuildExt(build_ext):
                 #probably goes wrong if this is for python 2!
                 self.boost_library_dir = d
                 self.boostlib = "boost_python"
+                break
+            elif os.path.exists(d + "/libboost_python-py" + pyversion + ".dylib"): #Mac OS X
+                self.boost_library_dir = d
+                self.boostlib = "boost_python-py" + pyversion
                 break
             elif os.path.exists(d + "/libboost_python" + pyversion + ".dylib"): #Mac OS X
                 self.boost_library_dir = d

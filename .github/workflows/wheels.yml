@@ -53,7 +53,7 @@ jobs:
            CIBW_BUILD: ${{ matrix.python.cp }}-${{ matrix.buildplat.sys }}*
            CIBW_ARCHS_LINUX: "x86_64"
            CIBW_BEFORE_ALL_LINUX: >
-              apk add build-base git autoconf-archive autoconf automake libtool bzip2-dev icu-dev libxml2-dev boost-dev boost1.84-python3 libtool rsync &&
+              apk add build-base git autoconf-archive autoconf automake libtool bzip2-dev icu-dev libxml2-dev boost-dev boost-python3 libtool rsync &&
               mkdir -p /usr/local/share/aclocal/ && rsync -av --ignore-existing /usr/share/aclocal/*.m4 /usr/local/share/aclocal/ &&
               ./build-deps.sh
            CIBW_MUSLLINUX_X86_64_IMAGE: quay.io/pypa/musllinux_1_1_x86_64

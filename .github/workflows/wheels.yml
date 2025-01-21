@@ -38,8 +38,7 @@ jobs:
               if command -v apt-get; then
                 apt-get -y git libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev autoconf automake autoconf-archive libtool autotools-dev gcc g++ make libboost-dev
               elif command -v yum; then
-                yum install -y git libicu-devel libxml2-devel libxslt-devel zlib-devel bzip2-devel libtool autoconf-archive autoconf automake m4 wget boost-devel
-                #on CentOS 7 we also have libtar-devel which will be installed by build-deps.sh, on 8 they are missing and will be installed from source or otherwise
+                yum install -y git libicu-devel libxml2-devel libxslt-devel zlib-devel bzip2-devel libtool autoconf-archive autoconf automake m4 wget boost-devel boost-python3 boost-python3-devel
               fi &&
               ./build-deps.sh
            CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux_2_28_x86_64

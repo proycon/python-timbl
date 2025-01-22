@@ -73,7 +73,7 @@ jobs:
               du -ah /opt/homebrew | grep boost_python
 
       - uses: actions/upload-artifact@v4
-        if: ${{ ! (runner.os == 'macOS' && matrix.python.cp == 'cp313') }}
+        if: ${{ ! (runner.os == 'macOS' && matrix.python.cp != 'cp313') }}
         with:
           name: ${{matrix.python.cp}}-${{matrix.buildplat.sys}}-${{matrix.buildplat.arch}}
           path: ./wheelhouse/*.whl

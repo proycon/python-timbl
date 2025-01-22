@@ -44,6 +44,9 @@ In a Python virtual environment, run:
 pip install python3-timbl
 ```
 
+Note that on macOS, wheel packages are currently only available for Python
+3.13, as this the the Python version Homebrew uses in linking libboost-python.
+
 If no wheels (binary packages) are available for your system, then this will
 attempt to compile from source. If that is the case, a number of dependencies
 are required:
@@ -54,13 +57,9 @@ The first is TiMBL itself; download its tarball from TiMBL's homepage and
 follow the installation instructions.  The second prerequisite is Boost.Python, a library that facilitates writing
 Python extension modules in C++. Many Linux distributions come with prebuilt
 packages of Boost.Python. If so, install this package; on Ubuntu/Debian this
-can be done as follows::
+can be done as follows.
 
 	$ sudo apt-get install libboost-python libboost-python-dev
-
-Note that on macOS, wheel packages are currently only available for the Python
-3.12, as this the the Python version Homebrew uses in linking libboost-python.
-Make sure you use that version.
 
 
 Usage

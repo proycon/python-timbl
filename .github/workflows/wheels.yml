@@ -38,10 +38,11 @@ jobs:
               if command -v apt-get; then
                 apt-get -y git libicu-dev libxml2-dev libxslt1-dev libbz2-dev zlib1g-dev autoconf automake autoconf-archive libtool autotools-dev gcc g++ make libboost-dev
               elif command -v yum; then
-                yum install -y git libicu-devel libxml2-devel libxslt-devel zlib-devel bzip2-devel libtool autoconf-archive autoconf automake m4 wget boost-devel
+                yum install -y git libicu-devel libxml2-devel libxslt-devel zlib-devel bzip2-devel libtool autoconf-archive autoconf automake m4 wget cmake
               fi &&
               ./build-deps.sh
-           CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux_2_34_x86_64
+           CIBW_BEFORE_BUILD: ./build-boost-python.sh
+           CIBW_MANYLINUX_X86_64_IMAGE: quay.io/pypa/manylinux_2_28_x86_64
            CIBW_SKIP: "*-win* *-manylinux_i686 pp*"
 
       - name: Build wheels (Linux musl)
